@@ -1,4 +1,7 @@
 # GDXEngine (gdxstudio-core)
+[![Travis](https://img.shields.io/travis/kerberjg/gdxstudio-core.svg)](https://travis-ci.org/kerberjg/gdxstudio-core)
+[![Github All Releases](https://img.shields.io/github/downloads/kerberjg/gdxengine-core/total.svg)](https://github.com/kerberjg/gdxstudio-core)
+
 GDXEngine is a Java cross-platform game engine for Windows, Linux, macOS, Android and iOS.
 
 It is based on the [LibGDX game framework](https://github.com/libgdx/libgdx) and serves as the core to GDXStudio.
