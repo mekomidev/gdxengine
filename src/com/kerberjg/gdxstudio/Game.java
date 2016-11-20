@@ -54,7 +54,7 @@ public final class Game implements ApplicationListener {
 		
 		updateThread = new Thread("updateThread") {
 			@Override
-			public void run() { update(); }
+			public void run() { updateLogic(); }
 		};
 		
 		/*
@@ -94,8 +94,14 @@ public final class Game implements ApplicationListener {
 		
 		if(mtEnabled) {
 			try {
+				// TODO: rewrite this to support more than 2 threads
+				// Start update thread
 				updateThread.start();
-				draw();
+				
+				// Render graphics
+				renderGraphics();
+				
+				// Wait for the update thread
 				updateThread.join();
 			}
 			catch(InterruptedException e) {
@@ -104,8 +110,8 @@ public final class Game implements ApplicationListener {
 			}
 		}
 		else {
-			update();
-			draw();
+			updateLogic();
+			renderGraphics();
 		}
 		
 		loopCounter.stop();
@@ -125,19 +131,19 @@ public final class Game implements ApplicationListener {
 		}
 	}
 	
-	private void draw() {
+	private void renderGraphics() {
 		drawCounter.start();
 		
 		// Clears the screen
-		Gdx.gl.glClearColor( 1, 0, 0, 1 );
+		Gdx.gl.glClearColor( 1f, 0f, 1f, 1f );
 		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		
-		stage.draw();
+		stage.render();
 		
 		drawCounter.stop();
 	}
 	
-	private void update() {
+	private void updateLogic() {
 		updateCounter.start();
 		
 		float delta = Gdx.graphics.getDeltaTime();

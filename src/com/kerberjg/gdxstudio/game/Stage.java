@@ -46,7 +46,7 @@ public class Stage {
 	/**	Updates the camera and renders all the entities
 	 * 
 	 * @author kerberjg*/
-	public void draw() {
+	public void render() {
 		camera.update();
 		
 		for(Entity a : entities.values())
