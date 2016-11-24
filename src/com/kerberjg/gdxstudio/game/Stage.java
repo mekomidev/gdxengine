@@ -84,7 +84,7 @@ public class Stage {
 		System.gc();
 	}
 
-	/** A helper factory class for building Stage instances */
+	/** A helper factory interface for building Stage instances */
 	public interface StageFactory {
 		public Stage build();
 	};
