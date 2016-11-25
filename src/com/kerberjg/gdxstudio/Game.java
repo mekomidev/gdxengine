@@ -1,13 +1,13 @@
 package com.kerberjg.gdxstudio;
 
+import static com.kerberjg.gdxstudio.Stage.StageFactory;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.PerformanceCounter;
-import com.kerberjg.gdxstudio.game.Stage;
-import static com.kerberjg.gdxstudio.game.Stage.StageFactory;
 
 /** The main ApplicationListener
  * 
