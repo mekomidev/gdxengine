@@ -1,5 +1,6 @@
 package com.kerberjg.gdxstudio.entities;
 
+import com.badlogic.gdx.utils.ObjectMap;
 import com.kerberjg.gdxstudio.utils.collections.FastIntMap;
 import com.kerberjg.gdxstudio.utils.collections.HybridMap;
 
@@ -14,7 +15,8 @@ public class EntityManager {
 	/** A table holding all components, with Component types as rows and Entity IDs as columns */
 	private FastIntMap<FastIntMap<Component>> components = new FastIntMap<FastIntMap<Component>>();
 	
-	// TODO: missing EntitySystem management
+	/** A map holding all the EntitySystem instances*/
+	private ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
 	
 	public EntityManager() {
 		// TODO: do something useful here 
@@ -22,7 +24,11 @@ public class EntityManager {
 	
 	//TODO: document everything properly
 	
-	public int addEntity(String name, Entity entity) {
+	/*
+	 * Entity management
+	 */
+	
+	protected int addEntity(String name, Entity entity) {
 		return entities.put(name, entity);
 	}
 	
@@ -59,6 +65,10 @@ public class EntityManager {
 		components.clear();
 	}
 	
+	/*
+	 * Component management
+	 */
+	
 	protected void addComponent(int entityId, Component component) {
 		if(entities.containsId(entityId)) {
 			getComponentMap(component.typeId).put(component);
@@ -79,7 +89,6 @@ public class EntityManager {
 	protected Component removeComponent(int entityId, int componentType) {
 		return getComponentMap(componentType).remove(entityId);
 	}
-
 	
 	private <C extends Component> FastIntMap<Component> getComponentMap(int componentType) {	
 		// Checks if the Component is registered
@@ -95,5 +104,22 @@ public class EntityManager {
 			}
 		} else
 			throw new RuntimeException("Component type with ID " + componentType + "has not been registered");
+	}
+	
+	/*
+	 * System management
+	 */
+	
+	@SuppressWarnings("unchecked")
+	protected <S extends EntitySystem> S addSystem(S system) {
+		return (S) systems.put(system.getClass(), system);
+	}
+	
+	protected <S extends EntitySystem> S getSystem(Class<S> systemType) {
+		return systemType.cast(systems.get(systemType));
+	}
+	
+	protected <S extends EntitySystem> S removeSystem(Class<S> systemType) {
+		return systemType.cast(systems.remove(systemType));
 	}
 }
