@@ -9,13 +9,18 @@ import com.kerberjg.gdxstudio.utils.collections.HybridMap;
  * 
  * @author kerberjg */
 public class EntityManager {
-	/** A map of all entities that alows */
+	/** A map of all entities that allows them to be reached both by their ID and their String name */
 	private HybridMap<String, Entity> entities = new HybridMap<String, Entity>();
+	/** A table holding all components, with Component types as rows and Entity IDs as columns */
 	private FastIntMap<FastIntMap<Component>> components = new FastIntMap<FastIntMap<Component>>();
 	
+	// TODO: missing EntitySystem management
+	
 	public EntityManager() {
-		
+		// TODO: do something useful here 
 	}
+	
+	//TODO: document everything properly
 	
 	public int addEntity(String name, Entity entity) {
 		return entities.put(name, entity);
