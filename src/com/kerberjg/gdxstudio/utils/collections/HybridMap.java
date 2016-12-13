@@ -1,10 +1,12 @@
 package com.kerberjg.gdxstudio.utils.collections;
 
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.ObjectIntMap;
 
 /** Maps the value both via a generic K and a integer ID */
-public class HybridMap<K,V> {
+public class HybridMap<K,V> implements Iterable<V> {
 	private FastIntMap<V> intSubmap = new FastIntMap<V>();
 	private ObjectIntMap<K> keySubmap = new ObjectIntMap<K>();
 
@@ -70,6 +72,11 @@ public class HybridMap<K,V> {
 	public void clear() {
 		keySubmap.clear();
 		intSubmap.clear();
+	}
+
+	@Override
+	public Iterator<V> iterator() {
+		return intSubmap.iterator();
 	}
 
 	//TODO: Implement .Entry, .Values, .Keys
