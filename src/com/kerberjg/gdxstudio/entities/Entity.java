@@ -14,8 +14,7 @@ public class Entity implements Disposable {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 	
 	
 	/*
@@ -38,6 +37,14 @@ public class Entity implements Disposable {
 		int componentId = Components.getComponentId(componentType);
 		
 		return componentType.cast(manager.getComponent(id, componentId));
+	}
+	
+	/**
+	 * @param componentType the class of the Component to remove
+	 * @return whether the Component was removed*/
+	public <C extends Component> boolean removeComponent(Class<C> componentType) {
+		int componentId = Components.getComponentId(componentType);
+		return manager.removeComponent(id, componentId) != null;
 	}
 	
 	/**
