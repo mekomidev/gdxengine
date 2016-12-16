@@ -33,7 +33,15 @@ public class FastIntMap<V> implements Iterable<V> {
 	@SuppressWarnings("unchecked")
 	public void grow(int capacity) {
 		V[] newItems = (V[])ArrayReflection.newInstance(items.getClass().getComponentType(), capacity);
-		System.arraycopy(items, 0, newItems, 0, Math.min(size, newItems.length));
+		
+		// Avoids copy if possible
+		if(size == 0)
+			System.arraycopy(items, 0, newItems, 0, Math.min(size, newItems.length));
+		else if(size == 1) {
+			int k = bits.nextSetBit(0);
+			newItems[k] = this.items[k];
+		}
+		
 		this.items = newItems;
 	}
 
