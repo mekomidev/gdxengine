@@ -28,7 +28,7 @@ public final class Components {
 		poolMap.clear();
 	}
 	
-	/**	Registers the Component in the manager; if the Component has been registered previously, just returns its type ID
+	/**	Registers the Component in the manager and returns its new ID, or, if already registered, returns its preexisting ID
 	 * @return Component type ID*/
 	public static <C extends Component> int registerComponent(Class<C> ct) {
 		// Registers the component
