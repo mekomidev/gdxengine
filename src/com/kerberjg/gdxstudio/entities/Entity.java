@@ -1,8 +1,7 @@
 package com.kerberjg.gdxstudio.entities;
 
-import com.badlogic.gdx.utils.Disposable;
 
-public class Entity implements Disposable {
+public abstract class Entity implements PrimitiveEntity {
 	private final EntityManager manager;
 	public final int id;
 	public final String name;
@@ -12,10 +11,8 @@ public class Entity implements Disposable {
 		this.name = name;
 		this.id = manager.addEntity(name, this);
 	}
-
-	@Override
-	public void dispose() {}
 	
+	public abstract void event(String eventName, Object... blob);
 	
 	/*
 	 * 	Component management
@@ -44,13 +41,13 @@ public class Entity implements Disposable {
 	 * @return whether the Component was removed*/
 	public <C extends Component> boolean removeComponent(Class<C> componentType) {
 		int componentId = Components.getComponentId(componentType);
-		return manager.removeComponent(id, componentId) != null;
+		return manager.removeComponent(id, componentId);
 	}
 	
 	/**
 	 * @param componentId the type ID of the Component to remove
 	 * @return whether the Component was removed*/
 	public <C extends Component> boolean removeComponent(int componentId) {
-		return manager.removeComponent(id, componentId) != null;
+		return manager.removeComponent(id, componentId);
 	}
 }

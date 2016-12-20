@@ -1,50 +1,54 @@
 package com.kerberjg.gdxstudio;
 
 import com.badlogic.gdx.Gdx;
+import com.kerberjg.gdxstudio.entities.Entity;
 import com.kerberjg.gdxstudio.entities.EntityManager;
+import com.kerberjg.gdxstudio.entities.EntitySystem;
+import com.kerberjg.gdxstudio.entities.PrimitiveEntity;
 
-public class Stage {
+public class Stage extends EntityManager implements PrimitiveEntity {
 	
 	protected Stage() {}
-
-	/**	Initializes all entities, also setting up other facilities
-	 * 
-	 * @author kerberjg*/
-	public void create() {}
 	
-	/**	Updates the game logic on all entities
-	 * 
-	 * @author kerberjg*/
-	public void update(float delta) {}
+	@Override
+	public void create() {
+		// Initiates all systems
+		for(EntitySystem es : systems.values())
+			es.init();
+		
+		for(Entity e : entities)
+			e.create();
+	};
 	
-	/**	Updates the camera and renders all the entities
-	 * 
-	 * @author kerberjg*/
-	public void render() {}
+	public void pause() {
+		for(Entity e : entities)
+			e.event("game:status", Game.Status.PAUSE);
+	}
 
-	public void pause() {}
-
-	public void resume() {}
+	public void resume() {
+		for(Entity e : entities)
+			e.event("game:status", Game.Status.RESUME);
+	}
 	
-	/**	Resizes the viewport
-	 * 
-	 * @author kerberjg*/
-	public void resize(int width, int height) {}
+	public void resize(int width, int height) {
+		for(Entity e : entities)
+			e.event("screen:resize", width, height);
+	}
 
-	/**	Calls dispose() on all entities, disposes of all additional classes, deactivates the listeners and calls the GC to clean up.
-	 * 
-	 * @author kerberjg */
+	/**	Calls dispose() on all entities, disposes of all additional classes, deactivates the listeners and calls the GC to clean up */
+	@Override
 	public void dispose() {
+		// Disposes entities, components, systems
+		super.dispose();
 		// Reset game's InputProcessor
 		Gdx.input.setInputProcessor(null);
-
 		// Clear up the memory
-		//entities.dispose();
 		System.gc();
 	}
 
-	/** A helper factory interface for building Stage instances */
-	public interface StageFactory {
+	/** A helper factory interface for building Stage instances 
+	 * @author kerberjg */
+	public interface StageBuilder {
 		public Stage build();
-	};
+	}	
 }

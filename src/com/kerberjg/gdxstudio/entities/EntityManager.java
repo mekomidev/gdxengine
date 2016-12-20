@@ -1,8 +1,16 @@
 package com.kerberjg.gdxstudio.entities;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.kerberjg.gdxstudio.entities.EntitySystem;
 import com.kerberjg.gdxstudio.utils.collections.FastIntMap;
 import com.kerberjg.gdxstudio.utils.collections.HybridMap;
 
@@ -13,15 +21,65 @@ import com.kerberjg.gdxstudio.utils.collections.HybridMap;
  * @author kerberjg */
 public class EntityManager implements Disposable {
 	/** A map of all entities that allows them to be reached both by their ID and their String name */
-	private HybridMap<String, Entity> entities = new HybridMap<String, Entity>();
+	protected HybridMap<String, Entity> entities = new HybridMap<String, Entity>();
 	/** A table holding all components, with Component types as rows and Entity IDs as columns */
 	private FastIntMap<FastIntMap<Component>> components = new FastIntMap<FastIntMap<Component>>();
 	
 	/** A map holding all the EntitySystem instances*/
-	private ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
+	protected ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
 	
 	public EntityManager() {
-		// TODO: do something useful here 
+		// TODO: do something useful here
+	}
+	
+	/*
+	 * Execution
+	 */
+	private ExecutorService executor = Executors.newWorkStealingPool();
+	private ArrayList<Callable<?>> parallelTasks = new ArrayList<>();
+	
+	/** Updates all the entities, components and systems*/
+	public void update(float delta) {
+		// Systems
+		try {
+			parallelTasks.clear();
+			parallelTasks.ensureCapacity(systems.size);
+			
+			for(EntitySystem es : systems.values()) {
+				Callable<?> task = () -> { es.update(delta); return null; };
+				parallelTasks.add(task);
+			}
+			
+			// Executes all the tasks and waits for their completion
+			executor.invokeAll((Collection<? extends Callable<?>>) parallelTasks);
+		} catch (InterruptedException e) {
+			System.err.println("EntitySystem updating thread(s) was/were interrupted");
+			e.printStackTrace();
+		}
+		
+		// Entities
+		for(Entity e : entities)
+			e.update(delta);
+	}
+	
+	public void render() {
+		for(EntitySystem es : systems.values()) {
+			executor.execute(() -> { es.cleanup(); });
+		}
+		
+		// Renders all the graphics
+		for(Entity e : entities)
+			e.render();
+		
+		for(EntitySystem es : systems.values())
+			es.render();
+		
+		// Waits for the cleanup process to finish up to 10 seconds
+		try { executor.awaitTermination(10, TimeUnit.SECONDS); }
+		catch (InterruptedException e) {
+			System.err.println("EntitySystem cleanup was interrupted during rendering");
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -95,17 +153,31 @@ public class EntityManager implements Disposable {
 	}
 	
 	/** Removes an Entity, searching it by its name
-	 * @return the removed Entity */
-	public Entity removeEntity(String name) {
-		return entities.remove(name);
+	 * @return whether the Entity was removed */
+	public boolean removeEntity(String name) {	
+		return removeEntity(entities.getId(name));
 	}
 	
 	/** Removes an Entity, searching it by its ID
-	 * @return the removed Entity */
-	public Entity removeEntity(int id) {
-		return entities.remove(id);
+	 * @return whether the Entity was removed */
+	public boolean removeEntity(int id) {
+		Entity e = entities.remove(id);
+		
+		if(e != null) {
+			// Dispose of the removed Entity
+			e.dispose();
+			
+			// Removes all of entity's components
+			for(FastIntMap<Component> cm : components)
+				cm.remove(e.id);
+			
+			return true;
+		} else
+			return false;
 	}
 	
+	/** Removes all Entities and their Components. EntitySystems are left intact.
+	 * This operation isn't immediate; it is postponed to the end of the current update, if such is currently in motion */
 	public void clearEntities() {
 		// TODO: call dispose() on everything
 		entities.clear();
@@ -124,6 +196,14 @@ public class EntityManager implements Disposable {
 			throw new RuntimeException("Entity with ID " + entityId + " is not present");
 	}
 	
+	protected boolean hasComponent(int entityId, Class<? extends Component> componentType) {
+		return hasComponent(entityId, Components.getComponentId(componentType));
+	}
+	
+	protected boolean hasComponent(int entityId, int componentType) {
+		return components.get(componentType).containsKey(entityId);
+	}
+	
 	/** @returns the Component of a specific type that belongs to a specific entity */
 	protected <C extends Component> C getComponent(int entityId, int componentType) {
 		@SuppressWarnings("unchecked")
@@ -132,19 +212,25 @@ public class EntityManager implements Disposable {
 	}
 	
 	/** Removes a Component from an Entity, with both referred to by their IDs
-	 * 
-	 * @return the removed Component if present, otherwise null*/
-	protected Component removeComponent(int entityId, int componentType) {
-		return getComponentMap(componentType).remove(entityId);
+	 * @return whether the component was removed */
+	protected boolean removeComponent(int entityId, int componentType) {
+		Component c = getComponentMap(componentType).remove(entityId);
+		
+		if(c != null) {
+			c.dispose();
+			return true;
+		} else
+			return false;
 	}
 	
 	private <C extends Component> FastIntMap<Component> getComponentMap(int componentType) {	
 		// Checks if the Component is registered
 		if(Components.hasComponent(componentType)) {
-			// Checks if the Component is in the EntityManager's map
+			// Checks if the Component is in the EntityManager's map...
 			if(components.containsKey(componentType)) {
-				FastIntMap<Component> cm = components.get(componentType);
-				return cm;
+				FastIntMap<Component> componentMap = components.get(componentType);
+				return componentMap;
+			// ...and creates a new Component map otherwise
 			} else {
 				FastIntMap<Component> componentMap = new FastIntMap<Component>(entities.size());
 				components.put(componentMap);

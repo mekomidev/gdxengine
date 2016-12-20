@@ -1,6 +1,6 @@
 package com.kerberjg.gdxstudio;
 
-import static com.kerberjg.gdxstudio.Stage.StageFactory;
+import static com.kerberjg.gdxstudio.Stage.StageBuilder;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -13,12 +13,14 @@ import com.badlogic.gdx.utils.PerformanceCounter;
  * 
  *  @author kerberjg*/
 public final class Game implements ApplicationListener {
+	public static enum Status { INIT, RUN, PAUSE, RESUME, STOP };
+	
 	/** Current stage */
 	public static Stage stage;
 	/** Stage queue; at the end of a frame, the stage in this variable is loaded */
 	private static Stage nextStage;
 	/** A map of Stage factories for fast Stage instancing */
-	private static ObjectMap<String, StageFactory> stages;
+	private static ObjectMap<String, StageBuilder> stages;
 	
 	/** Game's asset manager */
 	public static AssetManager assets;
@@ -44,7 +46,7 @@ public final class Game implements ApplicationListener {
 		 *  Initializes the game
 		 */
 		assets = new AssetManager();
-		stages = new ObjectMap<String, StageFactory>(10);
+		stages = new ObjectMap<>(10);
 		
 		deltaScale = 1f;
 		
@@ -173,7 +175,7 @@ public final class Game implements ApplicationListener {
 	/** Maps a string to a StageFactory for future Stage loading
 	 * 
 	 * @author kerberjg */
-	public static void addStage(String name, StageFactory sfactory) {
+	public static void addStage(String name, StageBuilder sfactory) {
 		stages.put(name, sfactory);
 	}
 	
@@ -182,7 +184,7 @@ public final class Game implements ApplicationListener {
 	 * @return whether the Stage was properly instanced
 	 * @author kerberjg */
 	public static boolean loadStage(String name) {
-		StageFactory sfactory = stages.get(name);
+		StageBuilder sfactory = stages.get(name);
 		
 		if(sfactory != null) {
 			nextStage = sfactory.build();

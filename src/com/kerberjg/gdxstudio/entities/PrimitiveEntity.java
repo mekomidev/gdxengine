@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Disposable;
  * @hide
  * @author kerberjg
  * */
-interface PrimitiveEntity extends Disposable {
+public interface PrimitiveEntity extends Disposable {
 	public void create();
-	public void render(int lod);
+	public void render();
 	public void update(float delta);
 }	
