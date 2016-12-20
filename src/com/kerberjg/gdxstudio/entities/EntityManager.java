@@ -15,6 +15,7 @@ import com.kerberjg.gdxstudio.utils.collections.FastIntMap;
 import com.kerberjg.gdxstudio.utils.collections.HybridMap;
 
 // TODO: write tests for the whole ECS framework
+// TODO: consider separating the ECS from the game engine
 /** 
  * Keeps Components in parallel arrays, sorted by their Entity ID
  * 
