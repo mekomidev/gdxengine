@@ -247,19 +247,19 @@ public class EntityManager implements Disposable {
 	/** Adds an EntitySystem to the manager
 	 * @return an EntitySystem of the same type if previously present */
 	@SuppressWarnings("unchecked")
-	protected <S extends EntitySystem> S addSystem(S system) {
+	public <S extends EntitySystem> S addSystem(S system) {
 		return (S) systems.put(system.getClass(), system);
 	}
 	
 	/** @return the EntitySystem identified by its class*/
-	protected <S extends EntitySystem> S getSystem(Class<S> systemType) {
+	public <S extends EntitySystem> S getSystem(Class<S> systemType) {
 		return systemType.cast(systems.get(systemType));
 	}
 	
 	/** Removes an EntitySystem from the manager, calling its cleanup() and dispose() methods
 	 * 
 	 * @return whether the system was actually present and removed */
-	protected <S extends EntitySystem> boolean removeSystem(Class<S> systemType) {
+	public <S extends EntitySystem> boolean removeSystem(Class<S> systemType) {
 		EntitySystem es = systems.remove(systemType);
 		
 		if(es != null) {
