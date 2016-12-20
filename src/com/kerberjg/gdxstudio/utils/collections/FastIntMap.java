@@ -1,6 +1,9 @@
 package com.kerberjg.gdxstudio.utils.collections;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 
 import com.badlogic.gdx.utils.Bits;
 import com.badlogic.gdx.utils.reflect.ArrayReflection;
@@ -136,6 +139,14 @@ public class FastIntMap<V> implements Iterable<V> {
 			items[i] = null;
 	}
 
+	public Stream<V> stream() {
+		return Arrays.asList(items).stream();
+	}
+	
+	public Stream<V> parallelStream() {
+		return Arrays.asList(items).parallelStream();
+	}
+	
 	@Override
 	public Iterator<V> iterator() {
 		return new FastIntMapIterator<V>();

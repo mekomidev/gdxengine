@@ -1,7 +1,7 @@
 package com.kerberjg.gdxstudio.utils.collections;
 
-
 import java.util.Iterator;
+import java.util.stream.Stream;
 
 import com.badlogic.gdx.utils.ObjectIntMap;
 
@@ -72,6 +72,14 @@ public class HybridMap<K,V> implements Iterable<V> {
 	public void clear() {
 		keySubmap.clear();
 		intSubmap.clear();
+	}
+	
+	public Stream<V> stream() {
+		return intSubmap.stream();
+	}
+	
+	public Stream<V> parallelStream() {
+		return intSubmap.parallelStream();
 	}
 
 	@Override
