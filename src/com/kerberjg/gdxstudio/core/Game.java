@@ -32,12 +32,6 @@ public final class Game implements ApplicationListener {
 	/** Performance counters used for performance profiling */
 	private PerformanceCounter loopCounter, drawCounter, updateCounter;
 	
-	/** Multithreading flag. If set to true, the game's update will be performed on a secondary thread.
-	 * If set, the change will become effective only in the next frame */
-	public boolean mtEnabled;
-	/** Game's update thread. Used only when multithreading is enabled */
-	private Thread updateThread;
-	
 	private Game() {
 		PerformanceCounter initCounter = new PerformanceCounter("Init time");
 		initCounter.start();
@@ -53,11 +47,6 @@ public final class Game implements ApplicationListener {
 		loopCounter = new PerformanceCounter("Loop duration");
 		drawCounter = new PerformanceCounter("Draw duration");
 		updateCounter = new PerformanceCounter("Update duration");
-		
-		updateThread = new Thread("updateThread") {
-			@Override
-			public void run() { updateLogic(); }
-		};
 		
 		/*
 		 *  Loads configs
@@ -94,27 +83,9 @@ public final class Game implements ApplicationListener {
 			stage.create();
 		}
 		
-		if(mtEnabled) {
-			try {
-				// TODO: rewrite this to support more than 2 threads
-				// Start update thread
-				updateThread.start();
-				
-				// Render graphics
-				renderGraphics();
-				
-				// Wait for the update thread
-				updateThread.join();
-			}
-			catch(InterruptedException e) {
-				e.printStackTrace();
-				Gdx.app.error("LOOP", "Failed to join the update thread: " + e.getMessage());
-			}
-		}
-		else {
-			updateLogic();
-			renderGraphics();
-		}
+		// Runs the game loop
+		updateLogic();
+		renderGraphics();
 		
 		loopCounter.stop();
 		
