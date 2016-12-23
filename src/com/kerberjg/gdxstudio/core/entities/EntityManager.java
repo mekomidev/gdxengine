@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.entities;
+package com.kerberjg.gdxstudio.core.entities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.kerberjg.gdxstudio.entities.EntitySystem;
-import com.kerberjg.gdxstudio.utils.collections.FastIntMap;
-import com.kerberjg.gdxstudio.utils.collections.HybridMap;
+import com.kerberjg.gdxstudio.core.entities.EntitySystem;
+import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
+import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
 
 // TODO: write tests for the whole ECS framework
 // TODO: consider separating the ECS from the game engine

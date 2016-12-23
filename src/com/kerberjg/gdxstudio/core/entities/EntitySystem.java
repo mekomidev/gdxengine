@@ -1,7 +1,7 @@
-package com.kerberjg.gdxstudio.entities;
+package com.kerberjg.gdxstudio.core.entities;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.kerberjg.gdxstudio.utils.Updatable;
+import com.kerberjg.gdxstudio.core.utils.Updatable;
 
 public abstract class EntitySystem implements Updatable, Disposable {
 	public abstract void init();

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.utils.collections;
+package com.kerberjg.gdxstudio.core.utils.collections;
 
 import java.util.Iterator;
 import java.util.stream.Stream;

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.entities;
+package com.kerberjg.gdxstudio.core.entities;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.entities;
+package com.kerberjg.gdxstudio.core.entities;
 
 
 public abstract class Entity implements PrimitiveEntity {

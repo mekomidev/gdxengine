@@ -1,9 +1,9 @@
-package com.kerberjg.gdxstudio.entities;
+package com.kerberjg.gdxstudio.core.entities;
 
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
-import com.kerberjg.gdxstudio.utils.collections.FastIntMap;
+import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 
 /**
  * 
