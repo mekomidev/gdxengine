@@ -1,6 +1,6 @@
 package com.kerberjg.gdxstudio.tests.entities;
 
-import com.kerberjg.gdxstudio.entities.EntitySystem;
+import com.kerberjg.gdxstudio.core.entities.EntitySystem;
 
 public class TestSystem extends EntitySystem {
 	int base;

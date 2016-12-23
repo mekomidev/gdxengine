@@ -1,6 +1,6 @@
-package com.kerberjg.gdxstudio;
+package com.kerberjg.gdxstudio.core;
 
-import static com.kerberjg.gdxstudio.Stage.StageBuilder;
+import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
