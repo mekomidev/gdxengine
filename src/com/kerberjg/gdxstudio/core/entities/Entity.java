@@ -12,7 +12,7 @@ public abstract class Entity implements PrimitiveEntity {
 		this.id = manager.addEntity(name, this);
 	}
 	
-	public abstract void event(String eventName, Object... blob);
+	public abstract void triggerEvent(String eventName, Object... blob);
 	
 	/*
 	 * 	Component management

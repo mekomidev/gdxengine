@@ -21,18 +21,15 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 	};
 	
 	public void pause() {
-		for(Entity e : entities)
-			e.event("game:status", Game.Status.PAUSE);
+		triggerEvent("game:status", Game.Status.PAUSE);
 	}
 
 	public void resume() {
-		for(Entity e : entities)
-			e.event("game:status", Game.Status.RESUME);
+		triggerEvent("game:status", Game.Status.RESUME);
 	}
 	
 	public void resize(int width, int height) {
-		for(Entity e : entities)
-			e.event("screen:resize", width, height);
+		triggerEvent("screen:resize", width, height);
 	}
 
 	/**	Calls dispose() on all entities, disposes of all additional classes, deactivates the listeners and calls the GC to clean up */

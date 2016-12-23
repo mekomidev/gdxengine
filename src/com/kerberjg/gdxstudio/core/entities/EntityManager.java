@@ -186,6 +186,15 @@ public class EntityManager implements Disposable {
 	}
 	
 	/*
+	 * Event system
+	 */
+	
+	public void triggerEvent(String event, Object... blob) {
+		for(Entity e : entities)
+			e.triggerEvent(event, blob);
+	}
+	
+	/*
 	 * Component management
 	 */
 	
