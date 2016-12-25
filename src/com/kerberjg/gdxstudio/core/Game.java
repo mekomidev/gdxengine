@@ -5,7 +5,11 @@ import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.PerformanceCounter;
 
@@ -13,7 +17,19 @@ import com.badlogic.gdx.utils.PerformanceCounter;
  * 
  *  @author kerberjg*/
 public final class Game implements ApplicationListener {
+	/** An enumerator representing the various states of the game engine */
 	public static enum Status { INIT, RUN, PAUSE, RESUME, STOP };
+	private static Status status = Status.STOP;
+	
+	private static void setGameStatus(final Status status) {
+		Game.status = status;
+		if(stage != null && status != Status.STOP)
+			stage.triggerEvent("game:status", status);
+	}
+	
+	public static Status getGameStatus() {
+		return status;
+	}
 	
 	/** Current stage */
 	public static Stage stage;
@@ -33,6 +49,8 @@ public final class Game implements ApplicationListener {
 	private PerformanceCounter loopCounter, drawCounter, updateCounter;
 	
 	private Game() {
+		setGameStatus(Status.INIT);
+		
 		PerformanceCounter initCounter = new PerformanceCounter("Init time");
 		initCounter.start();
 		
@@ -53,7 +71,7 @@ public final class Game implements ApplicationListener {
 		 */
 		
 		initCounter.stop();
-		Gdx.app.debug("GAME", "Game initialized in " + (initCounter.current * 1000) + " ms");
+		System.out.println("Game initialized in " + (initCounter.current * 1000) + " ms");
 	}
 	
 	@Override
