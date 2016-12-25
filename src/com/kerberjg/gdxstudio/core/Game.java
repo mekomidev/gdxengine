@@ -69,6 +69,7 @@ public final class Game implements ApplicationListener {
 		/*
 		 *  Loads configs
 		 */
+		JsonValue config = new JsonReader().parse(Gdx.files.internal("config.json"));
 		
 		initCounter.stop();
 		System.out.println("Game initialized in " + (initCounter.current * 1000) + " ms");
