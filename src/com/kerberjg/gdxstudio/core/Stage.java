@@ -45,7 +45,8 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 
 	/** A helper factory interface for building Stage instances 
 	 * @author kerberjg */
-	public interface StageBuilder {
-		public Stage build();
+	public static abstract class StageBuilder {
+		protected Stage getStageInstance() { return new Stage(); }
+		public abstract Stage build();
 	}	
 }
