@@ -2,16 +2,21 @@ package com.kerberjg.gdxstudio.core;
 
 import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 
+import java.io.File;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.PerformanceCounter;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.kerberjg.gdxstudio.core.utils.builders.JsonStageBuilder;
 
 /** The main ApplicationListener
  * 
@@ -19,7 +24,7 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 public final class Game implements ApplicationListener {
 	/** An enumerator representing the various states of the game engine */
 	public static enum Status { INIT, RUN, PAUSE, RESUME, STOP };
-	private static Status status = Status.STOP;
+	private static Status status;
 	
 	private static void setGameStatus(final Status status) {
 		Game.status = status;
@@ -41,48 +46,136 @@ public final class Game implements ApplicationListener {
 	/** Game's asset manager */
 	public static AssetManager assets;
 	
-	private static int limitFps, maxDeltaTime;
+	// TODO: consider a performance-scalling mode for low-power operation
+	private static boolean limitFps;
+	private static int maxDeltaTime;
 	/** Time simulation scale factor */
 	public static float deltaScale;
 	
 	/** Performance counters used for performance profiling */
 	private PerformanceCounter loopCounter, drawCounter, updateCounter;
 	
+	/** Initializes all necessary classes and sets all default values */
 	private Game() {
+		// Game status
+		status = Status.STOP;
+		
+		// Managers and collections
+		assets = new AssetManager();
+		stages = new ObjectMap<>(16);
+		
+		// Performance counters
+		loopCounter = new PerformanceCounter("Loop duration");
+		drawCounter = new PerformanceCounter("Draw duration");
+		updateCounter = new PerformanceCounter("Update duration");
+	}
+	
+	public static void init() {
+		// Allows to run the method only if the class was stopped
+		if(Game.status != Status.STOP) return;
+		
+		// Updates the game status
 		setGameStatus(Status.INIT);
 		
+		// Counts initialization performance
 		PerformanceCounter initCounter = new PerformanceCounter("Init time");
 		initCounter.start();
 		
 		/*
-		 *  Initializes the game
-		 */
-		assets = new AssetManager();
-		stages = new ObjectMap<>(10);
-		
-		deltaScale = 1f;
-		
-		loopCounter = new PerformanceCounter("Loop duration");
-		drawCounter = new PerformanceCounter("Draw duration");
-		updateCounter = new PerformanceCounter("Update duration");
-		
-		/*
 		 *  Loads configs
 		 */
-		JsonValue config = new JsonReader().parse(Gdx.files.internal("config.json"));
+		JsonReader reader = new JsonReader();
+		FileHandle configFile = Gdx.files.internal("config.json");
+		if(!configFile.exists())
+			throw new GdxRuntimeException("A game config file ('config.json') was not found in the assets folder");
+		
+		JsonValue config = reader.parse(configFile);
+		
+		// Game loop
+		JsonValue loop = config.get("loop");
+		int fps = 0; boolean vsync = true; float scale = 1f; // defaults
+		
+		if(loop != null) {
+			try{ fps = loop.getInt("fps"); } catch(IllegalArgumentException e) {
+				Gdx.app.log("gdxengine", "Missing the config value for 'FPS limit', setting a default of 0");
+			}
+			
+			try{ vsync = loop.getBoolean("vsync"); } catch(IllegalArgumentException e) {
+				Gdx.app.log("gdxengine", "Missing the config value for 'VSync', setting a default of 'true'");
+			}
+			
+			try{ scale = loop.getFloat("scale"); } catch(IllegalArgumentException e) {
+				Gdx.app.log("gdxengine", "Missing the config value for 'time scalling factor', setting a default of 1");
+			}
+		}
+		
+		setFPSLimit(fps);
+		Gdx.graphics.setVSync(vsync);
+		deltaScale = scale;
+		
+		
+		/*
+		 *	Load stages
+		 */
+		
+		FileHandle f = Gdx.files.internal("assets/Screen.png");
+		System.out.println(String.valueOf(f.exists()) + '\n');
+		
+		FileHandle stagesDir = Gdx.files.internal("stages/");
+		if(!stagesDir.exists() || !stagesDir.isDirectory())
+			throw new GdxRuntimeException("A 'stages' directory was not found in the assets folder");
+		
+		for(FileHandle stageFile : stagesDir.list(".stg"))
+			try {
+				JsonValue stage = reader.parse(stageFile);
+				StageBuilder builder;
+				
+				// Gets the name
+				String name = stage.name;
+				
+				// Gets the StageBuilder
+				switch(stage.getString("type")) {
+				case "class":
+					Class<?> builderClass = ClassReflection.forName(stage.getString("class"));
+					builder = (StageBuilder) ClassReflection.newInstance(builderClass);
+					break;
+				
+				case "json":
+					JsonValue def = stage.get("def");
+					builder = new JsonStageBuilder(def);
+					break;
+					
+				default:
+					throw new IllegalArgumentException("The required type of stage \"" + name + "\" is not present");
+				}
+				
+				stages.put(name, builder);
+			} catch(ReflectionException e) {
+				
+			} catch(IllegalArgumentException e1) {
+				
+			}
+		
+		// Loads the first stage
 		
 		initCounter.stop();
-		System.out.println("Game initialized in " + (initCounter.current * 1000) + " ms");
+		Gdx.app.log("gdxengine", "Game initialized in " + (initCounter.current * 1000) + " ms");
 	}
 	
 	@Override
 	public void create() {
-		stage.create();
+		if(stage != null)
+			stage.create();
+		else {
+			Gdx.app.error("gdxengine", "A Stage instance was not initialized before the Game#create event");
+			Game.exit();
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		Gdx.app.debug("GAME", "Resizing screen to" + width + "x" + height);
+		assert(stage != null);
 		stage.resize(width, height);
 	}
 
@@ -109,7 +202,7 @@ public final class Game implements ApplicationListener {
 		loopCounter.stop();
 		
 		// Limits the rendering rate if enabled
-		if(limitFps > 0) {
+		if(limitFps) {
 			try {
 				float diff = maxDeltaTime - Gdx.graphics.getRawDeltaTime();
 				
@@ -162,6 +255,14 @@ public final class Game implements ApplicationListener {
 		stage.dispose();
 	}
 	
+	public static void exit() {
+		if(stage != null)
+			stage.dispose();
+		
+		Gdx.graphics.setContinuousRendering(false);
+		System.exit(0);
+	}
+	
 	/** Maps a string to a StageFactory for future Stage loading
 	 * 
 	 * @author kerberjg */
@@ -174,10 +275,10 @@ public final class Game implements ApplicationListener {
 	 * @return whether the Stage was properly instanced
 	 * @author kerberjg */
 	public static boolean loadStage(String name) {
-		StageBuilder sfactory = stages.get(name);
+		StageBuilder builder = stages.get(name);
 		
-		if(sfactory != null) {
-			nextStage = sfactory.build();
+		if(builder != null) {
+			nextStage = builder.build();
 			return true;
 		} else
 			return false;
@@ -189,11 +290,11 @@ public final class Game implements ApplicationListener {
 	 *  @author kerberjg */
 	public static void setFPSLimit(int fps) {
 		if(fps == 0) {
-			limitFps = 0;
+			limitFps = false;
 			maxDeltaTime = 0;
 		}
 		else {
-			limitFps = fps;
+			limitFps = true;
 			maxDeltaTime = 1000 / fps;
 		}
 	}
