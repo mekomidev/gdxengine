@@ -37,7 +37,7 @@ public class EntityManager implements Disposable {
 	 * Execution
 	 */
 	private ExecutorService executor = Executors.newWorkStealingPool();
-	private ArrayList<Callable<?>> parallelTasks = new ArrayList<>();
+	private ArrayList<Callable<Object>> parallelTasks = new ArrayList<>();
 	
 	/** Updates all the entities, components and systems*/
 	public void update(float delta) {
@@ -47,12 +47,12 @@ public class EntityManager implements Disposable {
 			parallelTasks.ensureCapacity(systems.size);
 			
 			for(EntitySystem es : systems.values()) {
-				Callable<?> task = () -> { es.update(delta); return null; };
+				Callable<Object> task = () -> { es.update(delta); return null; };
 				parallelTasks.add(task);
 			}
 			
 			// Executes all the tasks and waits for their completion
-			executor.invokeAll((Collection<? extends Callable<?>>) parallelTasks);
+			executor.invokeAll(parallelTasks);
 		} catch (InterruptedException e) {
 			System.err.println("EntitySystem updating thread(s) was/were interrupted");
 			e.printStackTrace();
