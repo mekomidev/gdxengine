@@ -2,7 +2,7 @@ package com.kerberjg.gdxstudio.core.utils.builders;
 
 import com.badlogic.gdx.utils.JsonValue;
 import com.kerberjg.gdxstudio.core.Stage;
-import com.kerberjg.gdxstudio.core.Stage.StageBuilder;
+import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 
 public class JsonStageBuilder extends StageBuilder {
 
