@@ -72,7 +72,7 @@ public final class Game implements ApplicationListener {
 	
 	public static void init() {
 		// Allows to run the method only if the class was stopped
-		if(Game.status != Status.STOP) return;
+		if(Game.status != Status.STOP) throw new GdxRuntimeException("You can't initialize the game more than once");
 		
 		// Updates the game status
 		setGameStatus(Status.INIT);
