@@ -157,6 +157,12 @@ public final class Game implements ApplicationListener {
 			}
 		
 		// Loads the first stage
+		StageBuilder firstStage = null;
+		
+		String firstStageName = config.getString("stage");
+		firstStage = (firstStageName != null ? stages.get(firstStageName) : stages.iterator().next().value);
+		
+		stage = firstStage.build();
 		
 		initCounter.stop();
 		Gdx.app.log("gdxengine", "Game initialized in " + (initCounter.current * 1000) + " ms");
