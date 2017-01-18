@@ -151,9 +151,9 @@ public final class Game implements ApplicationListener {
 				
 				stages.put(name, builder);
 			} catch(ReflectionException e) {
-				
+				e.printStackTrace();
 			} catch(IllegalArgumentException e1) {
-				
+				e1.printStackTrace();
 			}
 		
 		// Loads the first stage
