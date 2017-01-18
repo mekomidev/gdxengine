@@ -2,8 +2,6 @@ package com.kerberjg.gdxstudio.core;
 
 import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 
-import java.io.File;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
