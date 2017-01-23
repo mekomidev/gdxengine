@@ -5,10 +5,11 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
 import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 
-/**
+/** A static singleton for the management of components
  * 
  * @author kerberjg
  * */
+// TODO: this class is a minefield of NullPointerExceptions; eradicate those abominations!
 public final class Components {
 	/**Prevent this class from instancing (static singleton)*/
 	private Components() {}
@@ -29,7 +30,8 @@ public final class Components {
 	}
 	
 	/**	Registers the Component in the manager and returns its new ID, or, if already registered, returns its preexisting ID
-	 * @return Component type ID*/
+	 * @return Component type ID
+	 * @param ct Component class to register */
 	public static <C extends Component> int registerComponent(Class<C> ct) {
 		// Registers the component
 		final int id = componentMap.put(ct);
@@ -41,27 +43,33 @@ public final class Components {
 		return id;	
 	}
 	
+	/** @return whether the Component with the specified ID is registered
+	 * @param id the ID of the Component to check */
 	public static boolean hasComponent(int id) {
 		return componentMap.containsKey(id);
 	}
 	
-	/** @return a Component's class by its ID */
+	/** @return a Component's class by its ID 
+	 * @param id the ID of a Component */
 	public static Class<? extends Component> getComponentClass(int id) {
 		return componentMap.get(id);
 	}
 	
-	/** @return a Component's ID by it's class */
+	/** @return a Component's ID by it's class
+	 * @param componentType a Component's class */
 	public static int getComponentId(Class<? extends Component> componentType) {
 		return inverseComponentMap.get(componentType, -1);
 	}
 	
-	/** @return a new instance of Component with class ct*/
+	/** @return a new instance of Component with class ct
+	 * @param componentType a Component's class */
 	public static <C extends Component> C getComponentInstance(Class<C> componentType) {
 		final int id = inverseComponentMap.get(componentType, -1);
 		return getComponentInstance(id);
 	}
 	
-	/** @return a new instance of Component with ID id*/
+	/** @return a new instance of Component with ID id
+	 * @param id the ID of a Component */
 	public static <C extends Component> C getComponentInstance(int id) {
 		@SuppressWarnings("unchecked")
 		Class<C> ct = (Class<C>) componentMap.get(id);
@@ -73,6 +81,8 @@ public final class Components {
 	}
 	
 	@SuppressWarnings("unchecked")
+	/** Puts a Component into the pool, freeing it from use
+	 * @param c the Component to free */
 	public static <C extends Component> void freeComponent(C c) {
 		((Pool<C>)poolMap.get(c.typeId)).free(c);
 	}
