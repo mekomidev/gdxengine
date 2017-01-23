@@ -1,7 +1,6 @@
 package com.kerberjg.gdxstudio.core.entities;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,8 +15,7 @@ import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
 
 // TODO: write tests for the whole ECS framework
 // TODO: consider separating the ECS from the game engine
-/** 
- * Keeps Components in parallel arrays, sorted by their Entity ID
+/** Keeps Components in parallel arrays, sorted by their Entity ID
  * 
  * @author kerberjg */
 public class EntityManager implements Disposable {
@@ -39,7 +37,9 @@ public class EntityManager implements Disposable {
 	private ExecutorService executor = Executors.newWorkStealingPool();
 	private ArrayList<Callable<Object>> parallelTasks = new ArrayList<>();
 	
-	/** Updates all the entities, components and systems*/
+	/** Updates all the entities, components and systems
+	 * @param delta the time span between the beginning and the end of the last frame
+	 */
 	public void update(float delta) {
 		// Systems
 		try {
@@ -63,6 +63,7 @@ public class EntityManager implements Disposable {
 			e.update(delta);
 	}
 	
+	/** Renders graphics to screen */
 	public void render() {
 		for(EntitySystem es : systems.values()) {
 			executor.execute(() -> { es.cleanup(); });
@@ -154,12 +155,14 @@ public class EntityManager implements Disposable {
 	}
 	
 	/** Removes an Entity, searching it by its name
+	 * @param name the name of the Entity to remove
 	 * @return whether the Entity was removed */
 	public boolean removeEntity(String name) {	
 		return removeEntity(entities.getId(name));
 	}
 	
 	/** Removes an Entity, searching it by its ID
+	 * @param id the ID of the Entity to remove
 	 * @return whether the Entity was removed */
 	public boolean removeEntity(int id) {
 		Entity e = entities.remove(id);

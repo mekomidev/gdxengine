@@ -259,6 +259,9 @@ public final class Game implements ApplicationListener {
 		stage.dispose();
 	}
 	
+	/** Exits the game, disposing of all of its resources 
+	 * 
+	 * @author kerberjg */
 	public static void exit() {
 		if(stage != null)
 			stage.dispose();
@@ -268,15 +271,18 @@ public final class Game implements ApplicationListener {
 	}
 	
 	/** Maps a string to a StageFactory for future Stage loading
+	 * @param name the name to register the Stage with
+	 * @param builder the relative StageBuilder class
 	 * 
 	 * @author kerberjg */
-	public static void addStage(String name, StageBuilder sfactory) {
-		stages.put(name, sfactory);
+	public static void addStage(String name, StageBuilder builder) {
+		stages.put(name, builder);
 	}
 	
 	/** Instantiates a Stage via its registered factory and loads it on the next frame
-	 * 
+	 * @param name the name of the Stage to load
 	 * @return whether the Stage was properly instanced
+	 * 
 	 * @author kerberjg */
 	public static boolean loadStage(String name) {
 		StageBuilder builder = stages.get(name);
@@ -289,8 +295,8 @@ public final class Game implements ApplicationListener {
 	}
 	
 	/** Sets the FPS limit for the game
-	 * 
 	 *  @param fps Game's max refresh rate rate. If 0, the limiting will be disabled
+	 *  
 	 *  @author kerberjg */
 	public static void setFPSLimit(int fps) {
 		if(fps == 0) {
@@ -306,7 +312,8 @@ public final class Game implements ApplicationListener {
 	/** The singleton instance of this class */
 	private static Game instance;
 	
-	/** Returns the singleton instance of this class
+	/** Singleton getter
+	 * @return the singleton instance of this class
 	 * 
 	 * @author kerberjg */
 	public static Game getInstance() {
