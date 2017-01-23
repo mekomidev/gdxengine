@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 apply plugin: 'eclipse'
 
 group = "com.kerberjg.gdxstudio"
@@ -49,24 +50,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 task release(dependsOn: [jar, sourcesJar, javadocJar]) {}
 
-task writePom << {
-    pom {
-        project {
-            groupId = group
-            artifactId = name
-            version = version
-        
-            inceptionYear '2015'
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-        }
-    }.writeTo("$buildDir/pom.xml")
-}
 
 eclipse {
 	jdt {
