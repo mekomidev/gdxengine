@@ -2,7 +2,6 @@ package com.kerberjg.gdxstudio.core.utils.collections;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.stream.Stream;
 
 import com.badlogic.gdx.utils.Bits;
