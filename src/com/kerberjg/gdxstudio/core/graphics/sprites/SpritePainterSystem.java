@@ -97,7 +97,13 @@ public class SpritePainterSystem extends EntitySystem {
 	private static class DepthComparator implements Comparator<SpriteComponent> {
 		@Override
 		public int compare(SpriteComponent a, SpriteComponent b) {
-			if(a.depth == b.depth)
+			// Checks for null cases, putting them at the end of the list
+			if(a == null)
+				return 1;
+			else if (b == null)
+				return -1;
+			// Does actual sorting
+			else if(a.depth == b.depth)
 				return 0;
 			else if(a.depth > b.depth)
 				return 1;
