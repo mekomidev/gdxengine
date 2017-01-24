@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.entities;
+package com.kerberjg.gdxstudio.core.ecs;
 
 /**	An abstract Entity.
  * All of the ECS functionalities are implemented, what's left to the user is just the general behavior

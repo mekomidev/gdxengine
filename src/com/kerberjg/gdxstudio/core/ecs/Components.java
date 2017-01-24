@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.entities;
+package com.kerberjg.gdxstudio.core.ecs;
 
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.Pool;

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.entities;
+package com.kerberjg.gdxstudio.core.ecs;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.kerberjg.gdxstudio.core.utils.Updatable;

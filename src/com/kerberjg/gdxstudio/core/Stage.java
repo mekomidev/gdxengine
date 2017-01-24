@@ -1,10 +1,10 @@
 package com.kerberjg.gdxstudio.core;
 
 import com.badlogic.gdx.Gdx;
-import com.kerberjg.gdxstudio.core.entities.Entity;
-import com.kerberjg.gdxstudio.core.entities.EntityManager;
-import com.kerberjg.gdxstudio.core.entities.EntitySystem;
-import com.kerberjg.gdxstudio.core.entities.PrimitiveEntity;
+import com.kerberjg.gdxstudio.core.ecs.Entity;
+import com.kerberjg.gdxstudio.core.ecs.EntityManager;
+import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
+import com.kerberjg.gdxstudio.core.ecs.PrimitiveEntity;
 
 public class Stage extends EntityManager implements PrimitiveEntity {
 	

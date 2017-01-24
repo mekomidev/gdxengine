@@ -3,7 +3,7 @@ package com.kerberjg.gdxstudio.tests.entities;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import com.kerberjg.gdxstudio.core.entities.*;
+import com.kerberjg.gdxstudio.core.ecs.*;
 
 public class ECSTest {
 

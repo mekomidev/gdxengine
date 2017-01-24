@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.entities;
+package com.kerberjg.gdxstudio.core.ecs;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.kerberjg.gdxstudio.core.entities.EntitySystem;
+import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
 import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
 
