@@ -137,6 +137,14 @@ public class FastIntMap<V> implements Iterable<V> {
 		for(int i = 0; i < items.length; i++)
 			items[i] = null;
 	}
+	
+	/** @return a copy of the underlying array */
+	public V[] toArray() {
+		@SuppressWarnings("unchecked")
+		V[] newItems = (V[])ArrayReflection.newInstance(items.getClass().getComponentType(), items.length);
+		System.arraycopy(items, 0, newItems, 0, items.length);
+		return newItems;
+	}
 
 	public Stream<V> stream() {
 		return Arrays.asList(items).stream();
