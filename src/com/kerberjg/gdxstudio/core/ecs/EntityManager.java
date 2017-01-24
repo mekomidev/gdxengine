@@ -20,10 +20,9 @@ import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
  * @author kerberjg */
 public class EntityManager implements Disposable {
 	/** A map of all entities that allows them to be reached both by their ID and their String name */
-	protected HybridMap<String, Entity> entities = new HybridMap<String, Entity>();
+	protected HybridMap<String, Entity> entities = new HybridMap<>();
 	/** A table holding all components, with Component types as rows and Entity IDs as columns */
-	private FastIntMap<FastIntMap<Component>> components = new FastIntMap<FastIntMap<Component>>();
-	
+	private FastIntMap<FastIntMap<? extends Component>> components = new FastIntMap<>();
 	/** A map holding all the EntitySystem instances*/
 	protected ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
 	
@@ -172,7 +171,7 @@ public class EntityManager implements Disposable {
 			e.dispose();
 			
 			// Removes all of entity's components
-			for(FastIntMap<Component> cm : components)
+			for(FastIntMap<? extends Component> cm : components)
 				cm.remove(e.id);
 			
 			return true;
@@ -218,7 +217,7 @@ public class EntityManager implements Disposable {
 	}
 	
 	/** @returns the Component of a specific type that belongs to a specific entity */
-	protected <C extends Component> C getComponent(int entityId, int componentType) {
+	public <C extends Component> C getComponent(int entityId, int componentType) {
 		@SuppressWarnings("unchecked")
 		Class<C> ct = (Class<C>) Components.getComponentClass(componentType);
 		return ct.cast(getComponentMap(componentType).get(entityId));
@@ -236,18 +235,19 @@ public class EntityManager implements Disposable {
 			return false;
 	}
 	
-	private <C extends Component> FastIntMap<Component> getComponentMap(int componentType) {	
+	@SuppressWarnings("unchecked")
+	public <C extends Component> FastIntMap<C> getComponentMap(int componentType) {	
 		// Checks if the Component is registered
 		if(Components.hasComponent(componentType)) {
 			// Checks if the Component is in the EntityManager's map...
 			if(components.containsKey(componentType)) {
-				FastIntMap<Component> componentMap = components.get(componentType);
-				return componentMap;
+				FastIntMap<? extends Component> componentMap = components.get(componentType);
+				return (FastIntMap<C>) componentMap;
 			// ...and creates a new Component map otherwise
 			} else {
 				FastIntMap<Component> componentMap = new FastIntMap<Component>(entities.size());
 				components.put(componentMap);
-				return componentMap;
+				return (FastIntMap<C>) componentMap;
 			}
 		} else
 			throw new RuntimeException("Component type with ID " + componentType + "has not been registered");
