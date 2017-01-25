@@ -26,10 +26,6 @@ public class EntityManager implements Disposable {
 	/** A map holding all the EntitySystem instances*/
 	protected ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
 	
-	public EntityManager() {
-		// TODO: do something useful here
-	}
-	
 	/*
 	 * Execution
 	 */
