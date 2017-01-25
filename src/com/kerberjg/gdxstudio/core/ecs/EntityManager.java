@@ -15,7 +15,8 @@ import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
 
 // TODO: write tests for the whole ECS framework
 // TODO: consider separating the ECS from the game engine
-/** Keeps Components in parallel arrays, sorted by their Entity ID
+// TODO: rename EntityManager to something without Entity in the name
+/** Keeps Component.map in parallel arrays, sorted by their Entity ID
  * 
  * @author kerberjg */
 public class EntityManager implements Disposable {
@@ -37,6 +38,7 @@ public class EntityManager implements Disposable {
 	 */
 	public void update(float delta) {
 		// Systems
+		// processed first
 		try {
 			parallelTasks.clear();
 			parallelTasks.ensureCapacity(systems.size);
@@ -54,6 +56,7 @@ public class EntityManager implements Disposable {
 		}
 		
 		// Entities
+		// processed last
 		for(Entity e : entities)
 			e.update(delta);
 	}
@@ -64,10 +67,13 @@ public class EntityManager implements Disposable {
 			executor.execute(() -> { es.cleanup(); });
 		}
 		
-		// Renders all the graphics
+		// Entities
+		// processed first, due to the potential effects on systems' work
 		for(Entity e : entities)
 			e.render();
 		
+		// Systems
+		// render from component data, and potentially from queued commands
 		for(EntitySystem es : systems.values())
 			es.render();
 		
