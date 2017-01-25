@@ -209,7 +209,7 @@ public class EntityManager implements Disposable {
 	}
 	
 	protected boolean hasComponent(int entityId, Class<? extends Component> componentType) {
-		return hasComponent(entityId, Components.getComponentId(componentType));
+		return hasComponent(entityId, Component.map.getSubclassId(componentType));
 	}
 	
 	protected boolean hasComponent(int entityId, int componentType) {
@@ -219,7 +219,7 @@ public class EntityManager implements Disposable {
 	/** @returns the Component of a specific type that belongs to a specific entity */
 	public <C extends Component> C getComponent(int entityId, int componentType) {
 		@SuppressWarnings("unchecked")
-		Class<C> ct = (Class<C>) Components.getComponentClass(componentType);
+		Class<C> ct = (Class<C>) Component.map.getSubclassClass(componentType);
 		return ct.cast(getComponentMap(componentType).get(entityId));
 	}
 	
@@ -238,7 +238,7 @@ public class EntityManager implements Disposable {
 	@SuppressWarnings("unchecked")
 	public <C extends Component> FastIntMap<C> getComponentMap(int componentType) {	
 		// Checks if the Component is registered
-		if(Components.hasComponent(componentType)) {
+		if(Component.map.hasSubclass(componentType)) {
 			// Checks if the Component is in the EntityManager's map...
 			if(components.containsKey(componentType)) {
 				FastIntMap<? extends Component> componentMap = components.get(componentType);

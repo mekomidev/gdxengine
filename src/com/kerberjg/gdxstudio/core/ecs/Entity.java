@@ -33,7 +33,7 @@ public abstract class Entity implements PrimitiveEntity {
 	/** @return the added Component instance
 	 * @param componentType the class of the Component to add to the Entity */
 	public <C extends Component> C addComponent(Class<C> componentType) {
-		C component = Components.getComponentInstance(componentType);
+		C component = Component.map.getSubclassInstance(componentType);
 		manager.addComponent(id, component);
 		return componentType.cast(component);
 	}
@@ -41,7 +41,7 @@ public abstract class Entity implements PrimitiveEntity {
 	/** @return the requested Component
 	 * @param componentId the type ID of the Component to return */
 	public <C extends Component> C getComponent(Class<C> componentType) {
-		int componentId = Components.getComponentId(componentType);
+		int componentId = Component.map.getSubclassId(componentType);
 		
 		return componentType.cast(manager.getComponent(id, componentId));
 	}
@@ -49,7 +49,7 @@ public abstract class Entity implements PrimitiveEntity {
 	/** @return whether the Component was removed
 	 * @param componentType the class of the Component to remove */
 	public <C extends Component> boolean removeComponent(Class<C> componentType) {
-		int componentId = Components.getComponentId(componentType);
+		int componentId = Component.map.getSubclassId(componentType);
 		return manager.removeComponent(id, componentId);
 	}
 	

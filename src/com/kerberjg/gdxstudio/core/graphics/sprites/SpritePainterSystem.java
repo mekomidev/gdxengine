@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
 import com.kerberjg.gdxstudio.core.Game;
-import com.kerberjg.gdxstudio.core.ecs.Components;
+import com.kerberjg.gdxstudio.core.ecs.Component;
 import com.kerberjg.gdxstudio.core.ecs.EntityManager;
 import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
 import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
@@ -43,7 +43,7 @@ public class SpritePainterSystem extends EntitySystem {
 	
 	@Override
 	public void init() {
-		spriteComponentType = Components.getComponentId(SpriteComponent.class);
+		spriteComponentType = Component.map.getSubclassId(SpriteComponent.class);
 	}
 
 	@Override
