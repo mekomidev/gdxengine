@@ -5,6 +5,9 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
 import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 
+/**	This class maps subclasses of a specified class to integer IDs, allowing them to be referenced/identified/instantiated faster
+ * 
+ * @author kerberjg */
 public class SubclassIdentityMapper<C> {
 	/** Maps integer IDs to subclasses*/
 	private FastIntMap<Class<? extends C>> subclassMap = new FastIntMap<>();
@@ -21,9 +24,9 @@ public class SubclassIdentityMapper<C> {
 		poolMap.clear();
 	}
 	
-	/**	Registers the Subclass in the manager and returns its new ID, or, if already registered, returns its preexisting ID
-	 * @return Subclass type ID
-	 * @param ct Subclass class to register */
+	/**	Registers the subclass in the manager and returns its new ID, or, if already registered, returns its preexisting ID
+	 * @return subclass type ID
+	 * @param ct subclass class to register */
 	public <T extends C> int registerSubclass(Class<T> ct) {
 		// Registers the component
 		final int id = subclassMap.put(ct);
@@ -35,33 +38,33 @@ public class SubclassIdentityMapper<C> {
 		return id;	
 	}
 	
-	/** @return whether the Subclass with the specified ID is registered
-	 * @param id the ID of the Subclass to check */
+	/** @return whether the subclass with the specified ID is registered
+	 * @param id the ID of the subclass to check */
 	public boolean hasSubclass(int id) {
 		return subclassMap.containsKey(id);
 	}
 	
-	/** @return a Subclass's class by its ID 
-	 * @param id the ID of a Subclass */
+	/** @return a subclass' class by its ID 
+	 * @param id the ID of a subclass */
 	public Class<? extends C> getSubclassClass(int id) {
 		return subclassMap.get(id);
 	}
 	
-	/** @return a Subclass's ID by it's class
-	 * @param componentType a Subclass's class */
+	/** @return a subclass' ID by it's class
+	 * @param componentType a subclass' class */
 	public int getSubclassId(Class<? extends C> componentType) {
 		return inverseSubclassMap.get(componentType, -1);
 	}
 	
-	/** @return a new instance of Subclass with class ct
-	 * @param componentType a Subclass's class */
+	/** @return a new instance of the subclass identified by a class
+	 * @param componentType a subclass' class */
 	public <T extends C> T getSubclassInstance(Class<T> componentType) {
 		final int id = inverseSubclassMap.get(componentType, -1);
 		return getSubclassInstance(id);
 	}
 	
-	/** @return a new instance of Subclass with ID id
-	 * @param id the ID of a Subclass */
+	/** @return a new instance of a subclass identified by an ID
+	 * @param id the ID of the subclass */
 	public <T extends C> T getSubclassInstance(int id) {
 		if(id >= 0) {
 			@SuppressWarnings("unchecked")
