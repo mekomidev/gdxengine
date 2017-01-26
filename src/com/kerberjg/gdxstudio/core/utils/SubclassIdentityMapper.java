@@ -5,7 +5,6 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
 import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 
-//TODO: this class is a minefield of NullPointerExceptions; eradicate those abominations!
 public class SubclassIdentityMapper<C> {
 	/** Maps integer IDs to subclasses*/
 	private FastIntMap<Class<? extends C>> subclassMap = new FastIntMap<>();
@@ -64,19 +63,30 @@ public class SubclassIdentityMapper<C> {
 	/** @return a new instance of Subclass with ID id
 	 * @param id the ID of a Subclass */
 	public <T extends C> T getSubclassInstance(int id) {
-		@SuppressWarnings("unchecked")
-		Class<T> ct = (Class<T>) subclassMap.get(id);
-		
-		if(id >= 0)
-			return ct.cast(poolMap.get(id).obtain());
-		else
+		if(id >= 0) {
+			@SuppressWarnings("unchecked")
+			Class<T> ct = (Class<T>) subclassMap.get(id);
+			@SuppressWarnings("unchecked")
+			Pool<T> pool = (Pool<T>) poolMap.get(id);
+			
+			if(pool != null)
+				return ct.cast(pool.obtain());
+			else
+				throw new RuntimeException("Class' " + ct.getClass().getName() + " pool wasn't registered properly");
+		} else
 			return null;	
 	}
 	
-	@SuppressWarnings("unchecked")
-	/** Puts a Subclass into the pool, freeing it from use
+	/** Puts a subclass into the pool, freeing it from use
 	 * @param c the Subclass to free */
 	public <T extends C> void freeSubclass(T c) {
-		((Pool<T>)poolMap.get(getSubclassId((Class<? extends C>)c.getClass())) ).free(c);
+		@SuppressWarnings("unchecked")
+		Pool<T> pool = (Pool<T>) poolMap.get(getSubclassId((Class<? extends C>)c.getClass()));
+		
+		if(pool != null)
+			pool.free(c);
+		else
+			throw new RuntimeException("Class' " + c.getClass().getName() + " pool wasn't registered properly");
+			
 	}
 }
