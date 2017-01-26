@@ -7,10 +7,18 @@ import com.badlogic.gdx.utils.ObjectIntMap;
 
 /** Maps the value both via a generic K and a integer ID */
 public class HybridMap<K,V> implements Iterable<V> {
-	private FastIntMap<V> intSubmap = new FastIntMap<V>();
-	private ObjectIntMap<K> keySubmap = new ObjectIntMap<K>();
+	private FastIntMap<V> intSubmap;
+	private ObjectIntMap<K> keySubmap;
 
-	//TODO: add a capacity and copy constructor to this and to all underlying classes
+	public HybridMap() {
+		intSubmap = new FastIntMap<V>();
+		keySubmap = new ObjectIntMap<K>();
+	}
+	
+	public HybridMap(int capacity) {
+		intSubmap = new FastIntMap<V>(capacity);
+		keySubmap = new ObjectIntMap<K>(capacity);
+	}
 	
 	public int size() {
 		return intSubmap.size();
