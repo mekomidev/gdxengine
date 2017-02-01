@@ -44,7 +44,6 @@ public final class Game implements ApplicationListener {
 	/** Game's asset manager */
 	public static AssetManager assets;
 	
-	// TODO: consider a performance-scalling mode for low-power operation
 	private static boolean limitFps;
 	private static int maxDeltaTime;
 	/** Time simulation scale factor */
