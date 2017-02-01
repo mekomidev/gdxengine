@@ -178,7 +178,7 @@ public final class Game implements ApplicationListener {
 
 	@Override
 	public void resize(int width, int height) {
-		Gdx.app.debug("GAME", "Resizing screen to" + width + "x" + height);
+		Gdx.app.log("GAME", "Resizing screen to" + width + "x" + height);
 		assert(stage != null);
 		stage.resize(width, height);
 	}
@@ -214,8 +214,7 @@ public final class Game implements ApplicationListener {
 					Thread.sleep((long) (diff * 1000));
 			}
 			catch(InterruptedException e) {
-				e.printStackTrace();
-				Gdx.app.error("LOOP", "Failed to sleep: " + e.getMessage());
+				Gdx.app.debug("LOOP", "Failed to sleep: " + e.getMessage());
 			}
 		}
 	}
