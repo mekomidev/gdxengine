@@ -8,7 +8,7 @@ import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
 /**	This class maps subclasses of a specified class to integer IDs, allowing them to be referenced/identified/instantiated faster
  * 
  * @author kerberjg */
-public class SubclassIdentityMapper<C> {
+public class SubclassMapper<C> {
 	/** Maps integer IDs to subclasses*/
 	private FastIntMap<Class<? extends C>> subclassMap = new FastIntMap<>();
 	/** Map for reverse lookup; maps subclasses to their IDs*/
