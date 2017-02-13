@@ -33,6 +33,7 @@ public abstract class Entity implements PrimitiveEntity {
 	/** @return the added Component instance
 	 * @param componentType the class of the Component to add to the Entity */
 	public <C extends Component> C addComponent(Class<C> componentType) {
+		//TODO: this should be done inside the EntityManager
 		C component = Component.map.getSubclassInstance(componentType);
 		manager.addComponent(id, component);
 		return componentType.cast(component);

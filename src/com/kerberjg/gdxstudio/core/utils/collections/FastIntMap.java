@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.reflect.ArrayReflection;
  * 
  * @author kerberjg
  */
+// TODO: Evaluate the perfomance advantage between FastIntMap and Vector
 public class FastIntMap<V> implements Iterable<V> {
 	public V[] items;
 	public Bits bits;
