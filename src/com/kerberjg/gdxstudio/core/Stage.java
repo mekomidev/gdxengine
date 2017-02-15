@@ -2,23 +2,33 @@ package com.kerberjg.gdxstudio.core;
 
 import com.badlogic.gdx.Gdx;
 import com.kerberjg.gdxstudio.core.ecs.Entity;
+import com.badlogic.gdx.graphics.Color;
 import com.kerberjg.gdxstudio.core.ecs.EntityManager;
 import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
 import com.kerberjg.gdxstudio.core.ecs.PrimitiveEntity;
 
 public class Stage extends EntityManager implements PrimitiveEntity {
+	/** Background color */
+	public final Color backgroundColor;
 	
-	protected Stage() {}
+	protected Stage() {
+		backgroundColor = new Color(Color.PURPLE);
+	}
 	
 	@Override
 	public void create() {
 		// Initiates all systems
 		for(EntitySystem es : systems.values())
 			es.init();
+	@Override
+	public void render() {
+		// Clears the screen with the background color
+		Gdx.gl.glClearColor( backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a );
+		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		
-		for(Entity e : entities)
-			e.create();
-	};
+		// Renders the graphics
+		super.render();
+	}
 	
 	public void pause() {
 		triggerEvent("game:status", Game.Status.PAUSE);

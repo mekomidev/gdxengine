@@ -2,24 +2,29 @@ package com.kerberjg.gdxstudio.core;
 
 import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.kerberjg.gdxstudio.core.config.GameConfiguration;
+import com.kerberjg.gdxstudio.core.config.JsonGameConfiguration;
+import com.kerberjg.gdxstudio.core.utils.builders.DummyStageBuilder;
 import com.kerberjg.gdxstudio.core.utils.builders.JsonStageBuilder;
 
 /** The main ApplicationListener
  * 
  *  @author kerberjg*/
 public final class Game implements ApplicationListener {
+	/** Debug flag */
+	public static boolean debug;
 	/** An enumerator representing the various states of the game engine */
 	public static enum Status { INIT, RUN, PAUSE, RESUME, STOP };
 	private static Status status;
@@ -52,6 +57,22 @@ public final class Game implements ApplicationListener {
 	/** Performance counters used for performance profiling */
 	private PerformanceCounter loopCounter, drawCounter, updateCounter;
 	
+	/** The singleton instance of this class */
+	private static Game instance;
+	
+	/** Singleton getter
+	 * @return the singleton instance of this class
+	 * 
+	 * @author kerberjg */
+	public static Game init(boolean debug) {
+		Game.debug = debug;
+		
+		if(instance == null)
+			instance = new Game();
+		
+		return instance;
+	}
+	
 	/** Initializes all necessary classes and sets all default values */
 	private Game() {
 		// Game status
@@ -67,60 +88,55 @@ public final class Game implements ApplicationListener {
 		updateCounter = new PerformanceCounter("Update duration");
 	}
 	
-	public static void init() {
-		// Allows to run the method only if the class was stopped
-		if(Game.status != Status.STOP) throw new GdxRuntimeException("You can't initialize the game more than once");
-		
+	@Override
+	public void create() {
 		// Updates the game status
 		setGameStatus(Status.INIT);
+		
+		// Debug mode
+		if(debug)
+			Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		// Counts initialization performance
 		PerformanceCounter initCounter = new PerformanceCounter("Init time");
 		initCounter.start();
 		
+		// Render splash screen
+		System.out.println(Gdx.files.internal("config.json").file().getAbsolutePath());
+		
+		FileHandle splashFile = Gdx.files.internal("Screen.png");
+		if(splashFile.exists()) {
+			
+		}
+		
+		JsonReader reader = new JsonReader();
+		
 		/*
 		 *  Loads configs
 		 */
-		JsonReader reader = new JsonReader();
+		GameConfiguration config;
 		FileHandle configFile = Gdx.files.internal("config.json");
-		if(!configFile.exists())
-			throw new GdxRuntimeException("A game config file ('config.json') was not found in the assets folder");
 		
-		JsonValue config = reader.parse(configFile);
-		
-		// Game loop
-		JsonValue loop = config.get("loop");
-		int fps = 0; boolean vsync = true; float scale = 1f; // defaults
-		
-		if(loop != null) {
-			try{ fps = loop.getInt("fps"); } catch(IllegalArgumentException e) {
-				Gdx.app.log("gdxengine", "Missing the config value for 'FPS limit', setting a default of 0");
-			}
-			
-			try{ vsync = loop.getBoolean("vsync"); } catch(IllegalArgumentException e) {
-				Gdx.app.log("gdxengine", "Missing the config value for 'VSync', setting a default of 'true'");
-			}
-			
-			try{ scale = loop.getFloat("scale"); } catch(IllegalArgumentException e) {
-				Gdx.app.log("gdxengine", "Missing the config value for 'time scalling factor', setting a default of 1");
-			}
+		if(configFile.exists()) {
+			Gdx.app.debug("gdxengine", "Found config.json, loading...");
+			config = new JsonGameConfiguration(configFile, reader);
+		} else {
+			Gdx.app.debug("gdxengine", "No config.json found, loading default configs...");
+			config = new GameConfiguration();
 		}
 		
-		setFPSLimit(fps);
-		Gdx.graphics.setVSync(vsync);
-		deltaScale = scale;
 		
+		setFPSLimit(config.fps);
+		Gdx.graphics.setVSync(config.vsync);
+		deltaScale = config.deltaScale;
 		
 		/*
 		 *	Load stages
 		 */
 		
-		FileHandle f = Gdx.files.internal("assets/Screen.png");
-		System.out.println(String.valueOf(f.exists()) + '\n');
-		
 		FileHandle stagesDir = Gdx.files.internal("stages/");
 		if(!stagesDir.exists() || !stagesDir.isDirectory())
-			throw new GdxRuntimeException("A 'stages' directory was not found in the assets folder");
+			Gdx.app.error("gdxengine", "A 'stages' directory was not found in the assets folder");
 		
 		for(FileHandle stageFile : stagesDir.list(".stg"))
 			try {
@@ -128,7 +144,7 @@ public final class Game implements ApplicationListener {
 				StageBuilder builder;
 				
 				// Gets the name
-				String name = stage.name;
+				String name = stage.getString("name");
 				
 				// Gets the StageBuilder
 				switch(stage.getString("type")) {
@@ -150,35 +166,34 @@ public final class Game implements ApplicationListener {
 			} catch(ReflectionException e) {
 				e.printStackTrace();
 			} catch(IllegalArgumentException e1) {
+				System.err.print("Error while getting stage '" + stageFile.name() + "': ");
 				e1.printStackTrace();
 			}
 		
 		// Loads the first stage
 		StageBuilder firstStage = null;
 		
-		String firstStageName = config.getString("stage");
-		firstStage = (firstStageName != null ? stages.get(firstStageName) : stages.iterator().next().value);
+		String firstStageName = config.firstStage;
+		if(stages.size > 0)
+			firstStage = (firstStageName != null ? stages.get(firstStageName) : stages.iterator().next().value);
+		else {
+			// TODO: in the future allow to load an empty stage with a debug interface
+			Gdx.app.log("gdxengine", "No stages found, initializing a dummy stage");
+			firstStage = new DummyStageBuilder();
+		}
 		
+		System.out.println(firstStage.getClass().getName());
 		stage = firstStage.build();
 		
 		initCounter.stop();
 		Gdx.app.log("gdxengine", "Game initialized in " + (initCounter.current * 1000) + " ms");
-	}
-	
-	@Override
-	public void create() {
-		if(stage != null)
-			stage.create();
-		else {
-			Gdx.app.error("gdxengine", "A Stage instance was not initialized before the Game#create event");
-			Game.exit();
-		}
+		
+		stage.create();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		Gdx.app.log("GAME", "Resizing screen to" + width + "x" + height);
-		assert(stage != null);
+		Gdx.app.log("GAME", "Resizing screen to " + width + "x" + height);
 		stage.resize(width, height);
 	}
 
@@ -190,82 +205,87 @@ public final class Game implements ApplicationListener {
 		loopCounter.start();
 		
 		// Loads new stage if queued
-		// TODO: solve this better!
 		if(nextStage != null) {
+			// Destroys the old stage gracefully
+			stage.triggerEvent("stage:dispose");
 			stage.dispose();
+			
+			// Loads the new stage
 			stage = nextStage;
 			nextStage = null;
 			stage.create();
 		}
 		
-		// Runs the game loop
-		updateLogic();
-		renderGraphics();
-		
-		loopCounter.stop();
-		
-		// Limits the rendering rate if enabled
-		if(limitFps) {
-			try {
-				float diff = maxDeltaTime - Gdx.graphics.getRawDeltaTime();
-				
-				if(diff > 0)
-					Thread.sleep((long) (diff * 1000));
-			}
-			catch(InterruptedException e) {
-				Gdx.app.debug("LOOP", "Failed to sleep: " + e.getMessage());
-			}
-		}
-	}
-	
-	private void renderGraphics() {
-		drawCounter.start();
-		
-		// Clears the screen
-		Gdx.gl.glClearColor( 1f, 0f, 1f, 1f );
-		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-		
-		stage.render();
-		
-		drawCounter.stop();
-	}
-	
-	private void updateLogic() {
+		/*
+		 * Updating
+		 */
 		updateCounter.start();
 		
 		float delta = Gdx.graphics.getDeltaTime();
 		stage.update(delta * deltaScale);
 		
 		updateCounter.stop();
+		updateCounter.tick();
+		
+		/*
+		 * Rendering
+		 */
+		drawCounter.start();
+		
+		stage.render();
+		
+		drawCounter.stop();
+		drawCounter.tick();
+		
+		loopCounter.stop();
+		loopCounter.tick();
+		
+		
+		/*if(debug) {
+			System.out.println("Loop time:" + Math.round(loopCounter.time.latest * 1000f) + " ms");
+			System.out.println("Update time:" + Math.round(updateCounter.time.latest * 1000f) + " ms");
+			System.out.println("Render time:" + Math.round(drawCounter.time.latest * 1000f) + " ms\n");
+		}*/
+		
+		/*
+		 *  Framerate limiting
+		 */
+		if(limitFps) {
+			try {
+				long diff = maxDeltaTime - (long)(Gdx.graphics.getRawDeltaTime() * 1000);
+				
+				if(diff > 0)
+					Thread.sleep(diff);
+			}
+			catch(InterruptedException e) {
+				Gdx.app.debug("LOOP", "Failed to sleep: " + e.getMessage());
+			}
+		}
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
 		stage.pause();
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
+		assets.finishLoading();
 		stage.resume();
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
 		stage.dispose();
+		assets.dispose();
 	}
 	
 	/** Exits the game, disposing of all of its resources 
 	 * 
 	 * @author kerberjg */
 	public static void exit() {
-		if(stage != null)
-			stage.dispose();
-		
-		Gdx.graphics.setContinuousRendering(false);
-		System.exit(0);
+		stage.triggerEvent("game:exit");
+		Gdx.app.exit();
 	}
 	
 	/** Maps a string to a StageFactory for future Stage loading
@@ -305,19 +325,5 @@ public final class Game implements ApplicationListener {
 			limitFps = true;
 			maxDeltaTime = 1000 / fps;
 		}
-	}
-	
-	/** The singleton instance of this class */
-	private static Game instance;
-	
-	/** Singleton getter
-	 * @return the singleton instance of this class
-	 * 
-	 * @author kerberjg */
-	public static Game getInstance() {
-		if(instance == null)
-			instance = new Game();
-		
-		return instance;
 	}
 }
