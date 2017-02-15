@@ -33,7 +33,7 @@ public class HybridMap<K,V> implements Iterable<V> {
 	}
 	
 	public boolean containsId(int id) {
-		return intSubmap.get(id) == null;
+		return intSubmap.get(id) != null;
 	}
 
 	public boolean containsValue(V value) {
