@@ -1,10 +1,8 @@
 package com.kerberjg.gdxstudio.core;
 
 import com.badlogic.gdx.Gdx;
-import com.kerberjg.gdxstudio.core.ecs.Entity;
 import com.badlogic.gdx.graphics.Color;
 import com.kerberjg.gdxstudio.core.ecs.EntityManager;
-import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
 import com.kerberjg.gdxstudio.core.ecs.PrimitiveEntity;
 
 public class Stage extends EntityManager implements PrimitiveEntity {
@@ -17,9 +15,10 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 	
 	@Override
 	public void create() {
-		// Initiates all systems
-		for(EntitySystem es : systems.values())
-			es.init();
+		this.init();
+		Game.assets.finishLoading();
+	}	
+	
 	@Override
 	public void render() {
 		// Clears the screen with the background color
@@ -58,5 +57,5 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 	public static abstract class StageBuilder {
 		protected Stage getStageInstance() { return new Stage(); }
 		public abstract Stage build();
-	}	
+	}
 }
