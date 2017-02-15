@@ -48,12 +48,12 @@ public class FastIntMap<V> implements Iterable<V> {
 		V[] newItems = (V[])ArrayReflection.newInstance(items.getClass().getComponentType(), capacity);
 		
 		// Avoids copy if possible
-		if(size != 0)
+		if(size == 1) {
+			int i = bits.nextSetBit(0);
+			newItems[i] = items[i];
+		} else if(size > 0)
 			System.arraycopy(items, 0, newItems, 0, items.length); //TODO: implement Bits#lastSetBit and use that as the number of items to copy
-		else if(size == 1) {
-			int k = bits.nextSetBit(0);
-			newItems[k] = this.items[k];
-		}
+		
 		
 		this.items = newItems;
 	}
@@ -97,7 +97,7 @@ public class FastIntMap<V> implements Iterable<V> {
 			prev = get(i);
 		
 		// Increment size only if no previous element was there
-		if(bits.getAndSet(i)) ++size;
+		if(!bits.getAndSet(i)) ++size;
 		
 		items[i] = e;
 		return prev;
