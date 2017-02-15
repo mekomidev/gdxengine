@@ -7,7 +7,7 @@ group = "com.kerberjg.gdxstudio"
 version = "0.0.1-SNAPSHOT"
 
 ext {
-	projectName = name
+	projectName = "gdxstudio-core"
 	
 	// Versions of dependencies
 	gdxVersion = "1.9.5"
