@@ -1,7 +1,10 @@
 package com.kerberjg.gdxstudio.core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.kerberjg.gdxstudio.core.ecs.EntityManager;
 import com.kerberjg.gdxstudio.core.ecs.PrimitiveEntity;
 
@@ -9,8 +12,13 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 	/** Background color */
 	public final Color backgroundColor;
 	
+	// Camera system
+	public Camera camera;
+	
 	protected Stage() {
 		backgroundColor = new Color(Color.PURPLE);
+		
+		camera = new OrthographicCamera(100,100);
 	}
 	
 	@Override
@@ -38,6 +46,12 @@ public class Stage extends EntityManager implements PrimitiveEntity {
 	}
 	
 	public void resize(int width, int height) {
+		camera.viewportWidth = width;
+		camera.viewportHeight = height;
+		camera.position.x = width / 2;
+		camera.position.y = height / 2;
+		camera.update();
+		
 		triggerEvent("screen:resize", width, height);
 	}
 
