@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -20,18 +19,56 @@ import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
  * 
  * @author kerberjg */
 public class EntityManager implements Disposable {
+	// Data structures
 	/** A map of all entities that allows them to be reached both by their ID and their String name */
-	protected HybridMap<String, Entity> entities = new HybridMap<>();
+	protected HybridMap<String, Entity> entities;
 	/** A table holding all components, with Component types as rows and Entity IDs as columns */
-	private FastIntMap<FastIntMap<? extends Component>> components = new FastIntMap<>();
+	private FastIntMap<FastIntMap<? extends Component>> components;
 	/** A map holding all the EntitySystem instances*/
-	protected ObjectMap<Class<? extends EntitySystem>, EntitySystem> systems = new ObjectMap<>();
+	protected FastIntMap<EntitySystem> systems;
+	private ObjectMap<Class<? extends EntitySystem>, int[]> systemCryteria;
+	
+	// Caching
+	/*
+	private boolean enableCaching;
+	private Bits changedComponents;
+	private FastIntMap<int[]> cachedQueries;
+	*/
+	
+	public EntityManager() {
+		this(64);
+	}
+	
+	public EntityManager(int entityCapacity) {
+		entities = new HybridMap<>(entityCapacity);
+		components = new FastIntMap<>();
+		
+		systems = new FastIntMap<>();
+		systemCryteria = new ObjectMap<>();
+	}
+	
+	public EntityManager(int entityCapacity, int componentCapacity, int systemCapacity) {
+		entities = new HybridMap<>(entityCapacity);
+		components = new FastIntMap<>(componentCapacity);
+		
+		systems = new FastIntMap<>(systemCapacity);
+		systemCryteria = new ObjectMap<>(systemCapacity);
+	}
 	
 	/*
 	 * Execution
 	 */
 	private ExecutorService executor = Executors.newWorkStealingPool();
 	private ArrayList<Callable<Object>> parallelTasks = new ArrayList<>();
+	
+	public void init() {
+		for(EntitySystem es : systems) {
+			systemCryteria.put(es.getClass(), es.init());
+		}
+		
+		for(Entity e : entities)
+			e.create();
+	}
 	
 	/** Updates all the entities, components and systems
 	 * @param delta the time span between the beginning and the end of the last frame
@@ -41,10 +78,36 @@ public class EntityManager implements Disposable {
 		// processed first
 		try {
 			parallelTasks.clear();
-			parallelTasks.ensureCapacity(systems.size);
+			parallelTasks.ensureCapacity(systems.size());
 			
-			for(EntitySystem es : systems.values()) {
-				Callable<Object> task = () -> { es.update(delta); return null; };
+			for(EntitySystem es : systems) {
+				//TODO: Why am I generate this much garbage? Ridiculous!
+				Callable<Object> task = new Callable<Object>() {
+
+					@Override
+					public Object call() {
+						try {
+							int[] dependencies = systemCryteria.get(es.getClass());
+							
+							es.updateBegin(delta);
+							
+							Object[] cs = components.get(dependencies[0]).items;
+							int x = components.get(dependencies[0]).size();
+							
+							
+							for(int cid : dependencies)
+								for(Component c : components.get(cid))
+									es.updateStep(c);
+							
+							es.updateEnd();
+						} catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						return null;
+					}
+				};
+				
 				parallelTasks.add(task);
 			}
 			
@@ -63,32 +126,33 @@ public class EntityManager implements Disposable {
 	
 	/** Renders graphics to screen */
 	public void render() {
-		for(EntitySystem es : systems.values()) {
-			executor.execute(() -> { es.cleanup(); });
-		}
+		// Systems
+		// render from component data, and potentially from queued commands
+		for(EntitySystem es : systems)
+			es.render();
 		
 		// Entities
 		// processed first, due to the potential effects on systems' work
 		for(Entity e : entities)
-			e.render();
-		
-		// Systems
-		// render from component data, and potentially from queued commands
-		for(EntitySystem es : systems.values())
-			es.render();
-		
-		// Waits for the cleanup process to finish up to 10 seconds
-		try { executor.awaitTermination(10, TimeUnit.SECONDS); }
-		catch (InterruptedException e) {
-			System.err.println("EntitySystem cleanup was interrupted during rendering");
-			e.printStackTrace();
-		}
+			e.render();	
 	}
 	
 	@Override
 	/** Disposes of all entities, components and systems */
 	public void dispose() {
-		
+		for(Entity e : entities) {
+			e.dispose();
+			
+			for(FastIntMap<? extends Component> cs : components) {
+				Component c = cs.remove(e.id);
+				
+				if(c != null)
+					c.dispose();
+			}
+		}
+			
+		for(EntitySystem es : systems)
+			removeSystem(es.systemId);
 	}
 	
 	//TODO: document everything properly
@@ -204,8 +268,11 @@ public class EntityManager implements Disposable {
 	
 	/** Adds a Component to a specific Entity */
 	protected void addComponent(int entityId, Component component) {
-		if(entities.containsId(entityId)) {
-			getComponentMap(component.typeId).put(component);
+		if(component == null)
+			throw new RuntimeException("Can't add a null Component");
+		else if(entities.containsId(entityId)) {
+			getComponentMap(component.typeId).put(entityId, component);
+			//changedComponents.set(component.typeId);
 		} else
 			throw new RuntimeException("Entity with ID " + entityId + " is not present");
 	}
@@ -230,15 +297,20 @@ public class EntityManager implements Disposable {
 	protected boolean removeComponent(int entityId, int componentType) {
 		Component c = getComponentMap(componentType).remove(entityId);
 		
+		/*
 		if(c != null) {
+			changedComponents.set(componentType);
 			c.dispose();
 			return true;
 		} else
 			return false;
+		*/
+		
+		return (c != null);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <C extends Component> FastIntMap<C> getComponentMap(int componentType) {	
+	private <C extends Component> FastIntMap<C> getComponentMap(int componentType) {	
 		// Checks if the Component is registered
 		if(Component.map.hasSubclass(componentType)) {
 			// Checks if the Component is in the EntityManager's map...
@@ -247,8 +319,8 @@ public class EntityManager implements Disposable {
 				return (FastIntMap<C>) componentMap;
 			// ...and creates a new Component map otherwise
 			} else {
-				FastIntMap<Component> componentMap = new FastIntMap<Component>(entities.size());
-				components.put(componentMap);
+				FastIntMap<? extends Component> componentMap = new FastIntMap<Component>(entities.size());
+				components.put(componentType, componentMap);
 				return (FastIntMap<C>) componentMap;
 			}
 		} else
@@ -261,24 +333,27 @@ public class EntityManager implements Disposable {
 	
 	/** Adds an EntitySystem to the manager
 	 * @return an EntitySystem of the same type if previously present */
-	@SuppressWarnings("unchecked")
-	public <S extends EntitySystem> S addSystem(S system) {
-		return (S) systems.put(system.getClass(), system);
+	public <S extends EntitySystem> void addSystem(S system) {
+		EntitySystem prev = systems.put(system.systemId, system);
+		
+		if(prev != null)
+			prev.dispose();
 	}
 	
 	/** @return the EntitySystem identified by its class*/
-	public <S extends EntitySystem> S getSystem(Class<S> systemType) {
-		return systemType.cast(systems.get(systemType));
+	@SuppressWarnings("unchecked")
+	public <S extends EntitySystem> S getSystem(int systemType) {
+		Class<S> systemClass = (Class<S>) EntitySystem.map.getSubclassClass(systemType);
+		return systemClass.cast(systems.get(systemType));
 	}
 	
 	/** Removes an EntitySystem from the manager, calling its cleanup() and dispose() methods
 	 * 
 	 * @return whether the system was actually present and removed */
-	public <S extends EntitySystem> boolean removeSystem(Class<S> systemType) {
+	public <S extends EntitySystem> boolean removeSystem(int systemType) {
 		EntitySystem es = systems.remove(systemType);
 		
 		if(es != null) {
-			es.cleanup();
 			es.dispose();
 			return true;
 		} else
