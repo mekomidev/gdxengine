@@ -53,14 +53,15 @@ public class SubclassMapper<C> {
 	/** @return a subclass' ID by it's class
 	 * @param componentType a subclass' class */
 	public int getSubclassId(Class<? extends C> componentType) {
-		return inverseSubclassMap.get(componentType, -1);
+		int id = inverseSubclassMap.get(componentType, -1);
+		
+		return (id >= 0 ? id : registerSubclass(componentType));
 	}
 	
 	/** @return a new instance of the subclass identified by a class
 	 * @param componentType a subclass' class */
 	public <T extends C> T getSubclassInstance(Class<T> componentType) {
-		final int id = inverseSubclassMap.get(componentType, -1);
-		return getSubclassInstance(id);
+		return getSubclassInstance(getSubclassId(componentType));
 	}
 	
 	/** @return a new instance of a subclass identified by an ID
@@ -77,7 +78,7 @@ public class SubclassMapper<C> {
 			else
 				throw new RuntimeException("Class' " + ct.getClass().getName() + " pool wasn't registered properly");
 		} else
-			return null;	
+			throw new RuntimeException("Component with ID " + id + " wasn't registered");
 	}
 	
 	/** Puts a subclass into the pool, freeing it from use
