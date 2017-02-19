@@ -1,0 +1,12 @@
+{
+	"name": "TestGame",
+	"version": "0.0.1",
+	
+	"stage": "dummyStage",
+	
+	"loop": {
+		"fps": 30,
+		"vsync": true,
+		"scale": 1.0
+	}
+}

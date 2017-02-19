@@ -1,0 +1,5 @@
+{
+	"name": "stg_Test",
+	"type": "class",
+	"class": "com.kerberjg.testgame.stages.TestStageBuilder"
+}
