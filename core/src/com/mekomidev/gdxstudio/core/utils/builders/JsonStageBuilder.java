@@ -1,8 +1,9 @@
-package com.kerberjg.gdxstudio.core.utils.builders;
+package com.mekomidev.gdxstudio.core.utils.builders;
+
+import static com.mekomidev.gdxstudio.core.Stage.StageBuilder;
 
 import com.badlogic.gdx.utils.JsonValue;
-import com.kerberjg.gdxstudio.core.Stage;
-import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
+import com.mekomidev.gdxstudio.core.Stage;
 
 public class JsonStageBuilder extends StageBuilder {
 

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.config;
+package com.mekomidev.gdxstudio.core.config;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.config;
+package com.mekomidev.gdxstudio.core.config;
 
 public class GameConfiguration {
 	/** Initial FPS limit;

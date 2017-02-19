@@ -1,8 +1,8 @@
-package com.kerberjg.gdxstudio.core.ecs;
+package com.mekomidev.gdxstudio.core.ecs;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
-import com.kerberjg.gdxstudio.core.utils.SubclassMapper;
+import com.mekomidev.gdxstudio.core.utils.SubclassMapper;
 
 public abstract class Component implements Pool.Poolable, Disposable {
 	/** SubclassMapper for components */

@@ -1,7 +1,7 @@
-package com.kerberjg.gdxstudio.core.ecs;
+package com.mekomidev.gdxstudio.core.ecs;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.kerberjg.gdxstudio.core.utils.SubclassMapper;
+import com.mekomidev.gdxstudio.core.utils.SubclassMapper;
 
 
 //TODO: rename EntitySystem to something without Entity in the name

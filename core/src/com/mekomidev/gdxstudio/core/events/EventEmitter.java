@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.events;
+package com.mekomidev.gdxstudio.core.events;
 
 public interface EventEmitter {
 	public void addListener(EventListener o);

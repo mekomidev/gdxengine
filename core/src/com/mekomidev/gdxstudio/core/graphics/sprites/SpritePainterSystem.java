@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.graphics.sprites;
+package com.mekomidev.gdxstudio.core.graphics.sprites;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,9 +9,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
-import com.kerberjg.gdxstudio.core.Game;
-import com.kerberjg.gdxstudio.core.ecs.Component;
-import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
+import com.mekomidev.gdxstudio.core.Game;
+import com.mekomidev.gdxstudio.core.ecs.Component;
+import com.mekomidev.gdxstudio.core.ecs.EntitySystem;
 
 /** Sprite rendering system implemented using the Painter's Algorithm.
  * Sorts sprites by depth before rendering them. 

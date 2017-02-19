@@ -1,7 +1,7 @@
-package com.kerberjg.gdxstudio.core.graphics.sprites;
+package com.mekomidev.gdxstudio.core.graphics.sprites;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.kerberjg.gdxstudio.core.ecs.Component;
+import com.mekomidev.gdxstudio.core.ecs.Component;
 
 public class SpriteComponent extends Component {
 	/** The Sprite object to be drawn */

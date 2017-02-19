@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.ecs;
+package com.mekomidev.gdxstudio.core.ecs;
 
 import com.badlogic.gdx.utils.Disposable;
 

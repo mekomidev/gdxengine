@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.utils.loaders;
+package com.mekomidev.gdxstudio.core.utils.loaders;
 
 
 /**

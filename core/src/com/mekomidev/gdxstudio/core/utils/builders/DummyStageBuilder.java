@@ -1,7 +1,7 @@
-package com.kerberjg.gdxstudio.core.utils.builders;
+package com.mekomidev.gdxstudio.core.utils.builders;
 
-import com.kerberjg.gdxstudio.core.Stage;
-import com.kerberjg.gdxstudio.core.Stage.StageBuilder;
+import com.mekomidev.gdxstudio.core.Stage;
+import com.mekomidev.gdxstudio.core.Stage.StageBuilder;
 
 public class DummyStageBuilder extends StageBuilder {
 

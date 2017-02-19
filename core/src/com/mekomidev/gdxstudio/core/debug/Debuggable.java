@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.debug;
+package com.mekomidev.gdxstudio.core.debug;
 
 /** A debugging interface for entities, designed to use in development mode and inside the editor 
  * 

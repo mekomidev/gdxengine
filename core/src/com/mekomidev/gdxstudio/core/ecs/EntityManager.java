@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.core.ecs;
+package com.mekomidev.gdxstudio.core.ecs;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -8,9 +8,10 @@ import java.util.concurrent.Executors;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
-import com.kerberjg.gdxstudio.core.ecs.EntitySystem;
-import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
-import com.kerberjg.gdxstudio.core.utils.collections.HybridMap;
+import com.mekomidev.gdxstudio.core.Game;
+import com.mekomidev.gdxstudio.core.ecs.EntitySystem;
+import com.mekomidev.gdxstudio.core.utils.collections.FastIntMap;
+import com.mekomidev.gdxstudio.core.utils.collections.HybridMap;
 
 // TODO: write tests for the whole ECS framework
 // TODO: consider separating the ECS from the game engine
@@ -26,6 +27,7 @@ public class EntityManager implements Disposable {
 	private FastIntMap<FastIntMap<? extends Component>> components;
 	/** A map holding all the EntitySystem instances*/
 	protected FastIntMap<EntitySystem> systems;
+	private FastIntMap<Callable<Object>> systemTasks;
 	private ObjectMap<Class<? extends EntitySystem>, int[]> systemCryteria;
 	
 	// Caching
@@ -44,6 +46,7 @@ public class EntityManager implements Disposable {
 		components = new FastIntMap<>();
 		
 		systems = new FastIntMap<>();
+		systemTasks = new FastIntMap<>();
 		systemCryteria = new ObjectMap<>();
 	}
 	
@@ -52,6 +55,7 @@ public class EntityManager implements Disposable {
 		components = new FastIntMap<>(componentCapacity);
 		
 		systems = new FastIntMap<>(systemCapacity);
+		systemTasks = new FastIntMap<>(systemCapacity);
 		systemCryteria = new ObjectMap<>(systemCapacity);
 	}
 	
@@ -80,33 +84,9 @@ public class EntityManager implements Disposable {
 			parallelTasks.clear();
 			parallelTasks.ensureCapacity(systems.size());
 			
-			for(EntitySystem es : systems) {
+			for(Callable<Object> task : systemTasks) {
 				//TODO: Why am I generate this much garbage? Ridiculous!
-				Callable<Object> task = new Callable<Object>() {
-
-					@Override
-					public Object call() {
-						try {
-							int[] dependencies = systemCryteria.get(es.getClass());
-							
-							es.updateBegin(delta);
-							
-							Object[] cs = components.get(dependencies[0]).items;
-							int x = components.get(dependencies[0]).size();
-							
-							
-							for(int cid : dependencies)
-								for(Component c : components.get(cid))
-									es.updateStep(c);
-							
-							es.updateEnd();
-						} catch(Exception e) {
-							e.printStackTrace();
-						}
-						
-						return null;
-					}
-				};
+				
 				
 				parallelTasks.add(task);
 			}
@@ -338,6 +318,24 @@ public class EntityManager implements Disposable {
 		
 		if(prev != null)
 			prev.dispose();
+		
+		systemTasks.put(system.systemId, () -> {
+			try {
+				int[] dependencies = systemCryteria.get(system.getClass());
+				
+				system.updateBegin(Game.getDelta());
+				
+				for(int cid : dependencies)
+					for(Component c : components.get(cid))
+						system.updateStep(c);
+				
+				system.updateEnd();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			return null;
+		});
 	}
 	
 	/** @return the EntitySystem identified by its class*/
