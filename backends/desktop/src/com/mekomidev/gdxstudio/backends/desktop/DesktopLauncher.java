@@ -1,8 +1,8 @@
-package com.kerberjg.gdxstudio.backends.desktop;
+package com.mekomidev.gdxstudio.backends.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.kerberjg.gdxstudio.core.Game;
+import com.mekomidev.gdxstudio.core.Game;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

@@ -3,7 +3,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 apply plugin: 'eclipse'
 
-group = "com.kerberjg.gdxstudio"
+group = "com.mekomidev.gdxstudio"
 version = "0.0.1-SNAPSHOT"
 
 ext {
@@ -32,10 +32,13 @@ dependencies {
 	// libGDX
 	compile "com.badlogicgames.gdx:gdx:$gdxVersion"
 	compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-	compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
 	
 	// Test dependencies
     testCompile 'junit:junit:4.12'
+}
+
+configurations {
+	sources
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -49,6 +52,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task release(dependsOn: [jar, sourcesJar, javadocJar]) {}
+
+artifacts {
+	sources sourcesJar
+}
 
 
 eclipse {

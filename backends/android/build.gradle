@@ -22,7 +22,7 @@ android {
         	enabled true
         }
         
-        applicationId "com.kerberjg.gdxstudio.backends"
+        applicationId "com.mekomidev.gdxstudio.backends"
         minSdkVersion 8
         targetSdkVersion 24
     }

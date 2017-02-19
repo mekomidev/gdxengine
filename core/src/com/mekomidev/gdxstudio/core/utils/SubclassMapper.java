@@ -1,9 +1,9 @@
-package com.kerberjg.gdxstudio.core.utils;
+package com.mekomidev.gdxstudio.core.utils;
 
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ReflectionPool;
-import com.kerberjg.gdxstudio.core.utils.collections.FastIntMap;
+import com.mekomidev.gdxstudio.core.utils.collections.FastIntMap;
 
 /**	This class maps subclasses of a specified class to integer IDs, allowing them to be referenced/identified/instantiated faster
  * 

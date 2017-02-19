@@ -1,14 +1,14 @@
-package com.kerberjg.testgame.entities;
+package com.mekomidev.testgame.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.kerberjg.gdxstudio.core.ecs.Entity;
-import com.kerberjg.gdxstudio.core.ecs.EntityManager;
-import com.kerberjg.gdxstudio.core.graphics.sprites.SpriteComponent;
-import com.kerberjg.gdxstudio.core.utils.loaders.GifDecoder;
+import com.mekomidev.gdxstudio.core.ecs.Entity;
+import com.mekomidev.gdxstudio.core.ecs.EntityManager;
+import com.mekomidev.gdxstudio.core.graphics.sprites.SpriteComponent;
+import com.mekomidev.gdxstudio.core.utils.loaders.GifDecoder;
 
 public class SnoopDoggEntity extends Entity {
 	Animation<TextureRegion> gif;

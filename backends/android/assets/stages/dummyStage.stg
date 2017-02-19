@@ -1,5 +1,5 @@
 {
 	"name": "stg_Test",
 	"type": "class",
-	"class": "com.kerberjg.testgame.stages.TestStageBuilder"
+	"class": "com.mekomidev.testgame.stages.TestStageBuilder"
 }

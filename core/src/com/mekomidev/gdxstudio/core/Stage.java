@@ -1,12 +1,12 @@
-package com.kerberjg.gdxstudio.core;
+package com.mekomidev.gdxstudio.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.kerberjg.gdxstudio.core.ecs.EntityManager;
-import com.kerberjg.gdxstudio.core.ecs.PrimitiveEntity;
+import com.mekomidev.gdxstudio.core.ecs.EntityManager;
+import com.mekomidev.gdxstudio.core.ecs.PrimitiveEntity;
 
 public class Stage extends EntityManager implements PrimitiveEntity {
 	/** Background color */

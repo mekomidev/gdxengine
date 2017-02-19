@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.kerberjg.gdxstudio.core.backends.ios</string>
+	<string>com.mekomidev.gdxstudio.backends.ios</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -25,7 +25,7 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>MOE.Main.Class</key>
-	<string>com.kerberjg.gdxstudio.core.backends.ios.IOSMoeLauncher</string>
+	<string>com.mekomidev.gdxstudio.backends.ios.IOSMoeLauncher</string>
 	<key>UIApplicationExitsOnSuspend</key>
 	<false/>
 	<key>UIRequiredDeviceCapabilities</key>

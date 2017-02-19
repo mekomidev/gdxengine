@@ -1,6 +1,6 @@
-package com.kerberjg.gdxstudio.core;
+package com.mekomidev.gdxstudio.core;
 
-import static com.kerberjg.gdxstudio.core.Stage.StageBuilder;
+import static com.mekomidev.gdxstudio.core.Stage.StageBuilder;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -14,10 +14,10 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.PerformanceCounter;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
-import com.kerberjg.gdxstudio.core.config.GameConfiguration;
-import com.kerberjg.gdxstudio.core.config.JsonGameConfiguration;
-import com.kerberjg.gdxstudio.core.utils.builders.DummyStageBuilder;
-import com.kerberjg.gdxstudio.core.utils.builders.JsonStageBuilder;
+import com.mekomidev.gdxstudio.core.config.GameConfiguration;
+import com.mekomidev.gdxstudio.core.config.JsonGameConfiguration;
+import com.mekomidev.gdxstudio.core.utils.builders.DummyStageBuilder;
+import com.mekomidev.gdxstudio.core.utils.builders.JsonStageBuilder;
 
 /** The main ApplicationListener
  * 
@@ -164,6 +164,7 @@ public final class Game implements ApplicationListener {
 				
 				stages.put(name, builder);
 			} catch(ReflectionException e) {
+				System.err.print("Error loading class for stage '" + stageFile.name() + "': ");
 				e.printStackTrace();
 			} catch(IllegalArgumentException e1) {
 				System.err.print("Error while getting stage '" + stageFile.name() + "': ");
@@ -221,7 +222,7 @@ public final class Game implements ApplicationListener {
 		 */
 		updateCounter.start();
 		
-		float delta = Gdx.graphics.getDeltaTime();
+		delta = Gdx.graphics.getDeltaTime();
 		stage.update(delta * deltaScale);
 		
 		updateCounter.stop();
@@ -325,5 +326,10 @@ public final class Game implements ApplicationListener {
 			limitFps = true;
 			maxDeltaTime = 1000 / fps;
 		}
+	}
+	
+	private static float delta;
+	public static float getDelta() {
+		return delta;
 	}
 }

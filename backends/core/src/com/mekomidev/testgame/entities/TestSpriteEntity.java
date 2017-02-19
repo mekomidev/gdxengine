@@ -1,11 +1,11 @@
-package com.kerberjg.testgame.entities;
+package com.mekomidev.testgame.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.kerberjg.gdxstudio.core.ecs.Entity;
-import com.kerberjg.gdxstudio.core.ecs.EntityManager;
-import com.kerberjg.gdxstudio.core.graphics.sprites.SpriteComponent;
+import com.mekomidev.gdxstudio.core.ecs.Entity;
+import com.mekomidev.gdxstudio.core.ecs.EntityManager;
+import com.mekomidev.gdxstudio.core.graphics.sprites.SpriteComponent;
 
 public class TestSpriteEntity extends Entity {
 	static float lol = 0;
