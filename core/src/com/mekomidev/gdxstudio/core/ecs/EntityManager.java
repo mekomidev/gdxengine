@@ -319,22 +319,25 @@ public class EntityManager implements Disposable {
 		if(prev != null)
 			prev.dispose();
 		
-		systemTasks.put(system.systemId, () -> {
-			try {
-				int[] dependencies = systemCryteria.get(system.getClass());
+		systemTasks.put(system.systemId, new Callable<Object>() {
+			@Override
+			public Object call() {
+				try {
+					int[] dependencies = systemCryteria.get(system.getClass());
+					
+					system.updateBegin(Game.getDelta());
+					
+					for(int cid : dependencies)
+						for(Component c : components.get(cid))
+							system.updateStep(c);
+					
+					system.updateEnd();
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				
-				system.updateBegin(Game.getDelta());
-				
-				for(int cid : dependencies)
-					for(Component c : components.get(cid))
-						system.updateStep(c);
-				
-				system.updateEnd();
-			} catch(Exception e) {
-				e.printStackTrace();
+				return null;
 			}
-			
-			return null;
 		});
 	}
 	

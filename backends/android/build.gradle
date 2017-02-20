@@ -22,7 +22,7 @@ android {
         	enabled true
         }
         
-        applicationId "com.mekomidev.gdxstudio.backends"
+        applicationId "com.mekomidev.gdxstudio.backends.android"
         minSdkVersion 8
         targetSdkVersion 24
     }
@@ -79,7 +79,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.kerberjg.gdxstudio.backends/com.kerberjg.gdxstudio.backends.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.mekomidev.gdxstudio.backends.android/com.mekomidev.gdxstudio.backends.android.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.

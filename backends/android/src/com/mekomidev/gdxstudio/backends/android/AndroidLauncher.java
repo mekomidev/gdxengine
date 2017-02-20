@@ -1,4 +1,4 @@
-package com.kerberjg.gdxstudio.backends.android;
+package com.mekomidev.gdxstudio.backends.android;
 
 import android.os.Bundle;
 
