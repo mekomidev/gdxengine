@@ -3,9 +3,9 @@ package com.mekomidev.testgame.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.mekomidev.gdxstudio.core.ecs.Entity;
-import com.mekomidev.gdxstudio.core.ecs.EntityManager;
-import com.mekomidev.gdxstudio.core.graphics.sprites.SpriteComponent;
+import com.mekomidev.gdxengine.core.ecs.Entity;
+import com.mekomidev.gdxengine.core.ecs.EntityManager;
+import com.mekomidev.gdxengine.core.graphics.sprites.SpriteComponent;
 
 public class TestSpriteEntity extends Entity {
 	static float lol = 0;

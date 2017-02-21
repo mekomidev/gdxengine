@@ -1,4 +1,4 @@
 include 'desktop', 'android', 'core', 'ios'
 
-include ':gdxstudio-core'
-project(':gdxstudio-core').projectDir = new File(settingsDir, '../core')
+include ':gdxengine'
+project(':gdxengine').projectDir = new File(settingsDir, '../core')

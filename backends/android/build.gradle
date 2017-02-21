@@ -22,7 +22,7 @@ android {
         	enabled true
         }
         
-        applicationId "com.mekomidev.gdxstudio.backends.android"
+        applicationId "com.mekomidev.testgame.backends.android"
         minSdkVersion 8
         targetSdkVersion 24
     }

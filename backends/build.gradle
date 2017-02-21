@@ -17,7 +17,7 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = "gdxstudio-backend"
+        appName = "gdxengine-backends"
         gdxVersion = '1.9.5'
         roboVMVersion = '2.3.0'
         box2DLightsVersion = '1.4'
@@ -92,7 +92,7 @@ project(":core") {
     apply plugin: "java"
 
     dependencies {
-    	compile project(path: ":gdxstudio-core")
+    	compile project(path: ":gdxengine")
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"

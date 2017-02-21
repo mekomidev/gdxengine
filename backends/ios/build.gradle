@@ -41,7 +41,7 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 moe {
     xcode {
         mainTarget 'ios-moe'
-        packageName 'com.mekomidev.gdxstudio.backends.ios'
+        packageName 'com.mekomidev.testgame.backends.ios'
         deploymentTarget = '9.0'
         xcodeProjectDirPath 'xcode'
         generateProject false
