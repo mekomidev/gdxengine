@@ -22,7 +22,7 @@ import com.mekomidev.gdxengine.core.utils.builders.JsonStageBuilder;
 /** The main ApplicationListener
  * 
  *  @author kerberjg*/
-public final class Game implements ApplicationListener {
+public class Game implements ApplicationListener {
 	/** Debug flag */
 	public static boolean debug;
 	/** An enumerator representing the various states of the game engine */
@@ -74,7 +74,7 @@ public final class Game implements ApplicationListener {
 	}
 	
 	/** Initializes all necessary classes and sets all default values */
-	private Game() {
+	protected Game() {
 		// Game status
 		status = Status.STOP;
 		
