@@ -7,7 +7,7 @@ group = "com.mekomidev.gdxstudio"
 version = "0.0.1-SNAPSHOT"
 
 ext {
-	projectName = "gdxstudio-core"
+	projectName = "gdxengine"
 	
 	// Versions of dependencies
 	gdxVersion = "1.9.5"
