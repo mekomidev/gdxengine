@@ -1,5 +1,8 @@
 package com.mekomidev.gdxengine.core.ecs;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Disposable;
 import com.mekomidev.gdxengine.core.utils.SubclassMapper;
 
@@ -13,13 +16,27 @@ public abstract class EntitySystem implements Disposable {
 		systemId = EntitySystem.map.registerSubclass(this.getClass());
 	}
 	
-	/**
-	 * @return an int array containing the IDs of components to pass */
-	protected abstract int[] init();
+	protected abstract void init();
+	protected abstract void update(float delta);
+	protected abstract void render();
 	
-	public abstract void updateBegin(float delta);
-	public abstract <C extends Component> void updateStep(C component);
-	public abstract void updateEnd();
-	
-	public abstract void render();
+	protected static class ComponentFilter<C extends Component> implements Iterable<C> {
+		public final Class<C> type;
+		
+		private final ArrayList<C> components = new ArrayList<>();
+		
+		private ComponentFilter(Class<C> classType) {
+			this.type = classType;
+		}
+		
+		public static <T extends Component> ComponentFilter<T> getInstance(Class<T> type) {
+			return new ComponentFilter<T>(type);
+		}
+
+		@Override
+		public Iterator<C> iterator() {
+			return components.iterator();
+		} 
+		
+	}
 }

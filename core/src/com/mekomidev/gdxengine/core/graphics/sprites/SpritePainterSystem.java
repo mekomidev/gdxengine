@@ -19,6 +19,7 @@ import com.mekomidev.gdxengine.core.ecs.EntitySystem;
  * @author kerberjg */
 public class SpritePainterSystem extends EntitySystem {
 	private static final int DEFAULT_MAX_SPRITES = 1000;
+	private static final int SPRITE_ID = Component.map.getSubclassId(SpriteComponent.class);
 	
 	/** Rendering batch */
 	private SpriteBatch batch;
@@ -37,35 +38,19 @@ public class SpritePainterSystem extends EntitySystem {
 		vessels = new ReflectionPool<>(Sprite.class, maxSprites);
 	}
 	
-	private static int[] components;
+	@Override
+	protected void init() {}
 	
 	@Override
-	protected int[] init() {
-		if(components == null) {
-			components = new int[1];
-			components[0] = Component.map.getSubclassId(SpriteComponent.class);
-		}
+	public void update(float delta) {
+		@SuppressWarnings("unchecked")
+		List<SpriteComponent> sprites = (List<SpriteComponent>) Game.stage.getComponents(SPRITE_ID);
+		ArrayList<SpriteComponent> sortedComponents = new ArrayList<>();
 		
-		return components;
-	}
-
-	ArrayList<SpriteComponent> sortedComponents = new ArrayList<>();
-	
-	@Override
-	public void updateBegin(float delta) {
-		batch.setProjectionMatrix(Game.stage.camera.combined);
-	}
-	
-	@Override
-	public <C extends Component> void updateStep(C c) {
-		SpriteComponent sc = (SpriteComponent) c;
-		if(sc != null && sc.sprite != null && sc.sprite.getTexture() != null && sc.visible)
-			sortedComponents.add(sc);
-				
-	}
-	
-	@Override
-	public void updateEnd() {
+		for(SpriteComponent sc : sprites)
+			if(sc != null && sc.sprite != null && sc.sprite.getTexture() != null && sc.visible)
+				sortedComponents.add(sc);
+		
 		// Sorts the sprites
 		Collections.sort(sortedComponents, new DepthComparator());
 		
@@ -73,10 +58,10 @@ public class SpritePainterSystem extends EntitySystem {
 		for(SpriteComponent sc : sortedComponents) {
 			Sprite s = vessels.obtain();
 			s.set(sc.sprite);
-			sprites.add(s);
+			this.sprites.add(s);
 		}
 		
-		sortedComponents.clear();
+		batch.setProjectionMatrix(Game.stage.camera.combined);
 	}
 
 	@Override

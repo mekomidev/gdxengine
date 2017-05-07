@@ -1,6 +1,9 @@
 package com.mekomidev.gdxengine.core.ecs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +31,6 @@ public class EntityManager implements Disposable {
 	/** A map holding all the EntitySystem instances*/
 	protected FastIntMap<EntitySystem> systems;
 	private FastIntMap<Callable<Object>> systemTasks;
-	private ObjectMap<Class<? extends EntitySystem>, int[]> systemCryteria;
 	
 	// Caching
 	/*
@@ -47,7 +49,6 @@ public class EntityManager implements Disposable {
 		
 		systems = new FastIntMap<>();
 		systemTasks = new FastIntMap<>();
-		systemCryteria = new ObjectMap<>();
 	}
 	
 	public EntityManager(int entityCapacity, int componentCapacity, int systemCapacity) {
@@ -56,7 +57,6 @@ public class EntityManager implements Disposable {
 		
 		systems = new FastIntMap<>(systemCapacity);
 		systemTasks = new FastIntMap<>(systemCapacity);
-		systemCryteria = new ObjectMap<>(systemCapacity);
 	}
 	
 	/*
@@ -66,9 +66,6 @@ public class EntityManager implements Disposable {
 	private ArrayList<Callable<Object>> parallelTasks = new ArrayList<>();
 	
 	public void init() {
-		for(EntitySystem es : systems) {
-			systemCryteria.put(es.getClass(), es.init());
-		}
 		
 		for(Entity e : entities)
 			e.create();
@@ -84,12 +81,8 @@ public class EntityManager implements Disposable {
 			parallelTasks.clear();
 			parallelTasks.ensureCapacity(systems.size());
 			
-			for(Callable<Object> task : systemTasks) {
-				//TODO: Why am I generate this much garbage? Ridiculous!
-				
-				
+			for(Callable<Object> task : systemTasks)
 				parallelTasks.add(task);
-			}
 			
 			// Executes all the tasks and waits for their completion
 			executor.invokeAll(parallelTasks);
@@ -307,6 +300,11 @@ public class EntityManager implements Disposable {
 			throw new RuntimeException("Component type with ID " + componentType + "has not been registered");
 	}
 	
+	public List<? extends Component> getComponents(int componentType) {
+		List<? extends Component> list = Collections.unmodifiableList(Arrays.asList(getComponentMap(componentType).items));
+		return list;
+	}
+	
 	/*
 	 * System management
 	 */
@@ -323,15 +321,7 @@ public class EntityManager implements Disposable {
 			@Override
 			public Object call() {
 				try {
-					int[] dependencies = systemCryteria.get(system.getClass());
-					
-					system.updateBegin(Game.getDelta());
-					
-					for(int cid : dependencies)
-						for(Component c : components.get(cid))
-							system.updateStep(c);
-					
-					system.updateEnd();
+					system.update(Game.getDelta());
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
