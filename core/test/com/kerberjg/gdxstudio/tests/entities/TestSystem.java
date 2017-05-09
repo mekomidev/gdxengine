@@ -1,7 +1,7 @@
 package com.kerberjg.gdxstudio.tests.entities;
 
-import com.mekomidev.gdxengine.core.ecs.Component;
-import com.mekomidev.gdxengine.core.ecs.EntitySystem;
+import com.mekomidev.gdxengine.ecs.Component;
+import com.mekomidev.gdxengine.ecs.EntitySystem;
 
 public class TestSystem extends EntitySystem {
 	int base;
