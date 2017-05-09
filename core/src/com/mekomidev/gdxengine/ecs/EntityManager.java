@@ -300,11 +300,15 @@ public class EntityManager implements Disposable {
 			throw new RuntimeException("Component type with ID " + componentType + "has not been registered");
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <C extends Component> C[] getComponents(int componentType) {
-		C[] src = (C[]) getComponentMap(componentType).items;
-		C[] array = Arrays.copyOf(src, src.length);
-		return array;
+	public List<? extends Component> getComponents(int componentType) {
+		// Do NOT try to use arrays here... are you listening?
+		// You will lose hours over goddamn type erasure because the component maps rely on generic arrays
+		// Even though your IDE will tell you "it's all fine, kiddo, assign .items to a Component array... because it technically is such!
+		// But noooo, it turns out that this cute Component array was an Object array ALL ALONG
+		// So please... for the sake of your own sanity... please don't do this mistake again... I beg you..
+		//		Regards, your future self
+		List<? extends Component> list = Collections.unmodifiableList(Arrays.asList(getComponentMap(componentType).items));
+		return list;
 	}
 	
 	/*

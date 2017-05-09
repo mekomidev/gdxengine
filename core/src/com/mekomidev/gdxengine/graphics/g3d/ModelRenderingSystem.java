@@ -23,9 +23,10 @@ public class ModelRenderingSystem extends EntitySystem {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void update(float delta) {
-		CameraComponent[] cameras = (CameraComponent[]) Game.stage.getComponents(CAMERA_ID);
-		ModelComponent[] models = (ModelComponent[]) Game.stage.getComponents(MODEL_ID);
+		List<CameraComponent> cameras = (List<CameraComponent>) Game.stage.getComponents(CAMERA_ID);
+		List<ModelComponent> models = (List<ModelComponent>) Game.stage.getComponents(MODEL_ID);
 		
 		for(CameraComponent cc : cameras) {
 			Camera cam = cc.cam;

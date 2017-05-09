@@ -22,9 +22,10 @@ public class SimpleAudioSystem extends EntitySystem {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void update(float delta) {
-		MusicComponent[] music = (MusicComponent[]) Game.stage.getComponents(MUSIC_ID);
-		SoundComponent[] sound = (SoundComponent[]) Game.stage.getComponents(SOUND_ID);
+		List<MusicComponent> music = (List<MusicComponent>) Game.stage.getComponents(MUSIC_ID);
+		List<SoundComponent> sound = (List<SoundComponent>) Game.stage.getComponents(SOUND_ID);
 		
 		// Update music volume and pitch
 		for(MusicComponent mc : music) {
