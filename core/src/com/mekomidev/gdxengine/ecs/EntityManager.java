@@ -300,9 +300,11 @@ public class EntityManager implements Disposable {
 			throw new RuntimeException("Component type with ID " + componentType + "has not been registered");
 	}
 	
-	public List<? extends Component> getComponents(int componentType) {
-		List<? extends Component> list = Collections.unmodifiableList(Arrays.asList(getComponentMap(componentType).items));
-		return list;
+	@SuppressWarnings("unchecked")
+	public <C extends Component> C[] getComponents(int componentType) {
+		C[] src = (C[]) getComponentMap(componentType).items;
+		C[] array = Arrays.copyOf(src, src.length);
+		return array;
 	}
 	
 	/*

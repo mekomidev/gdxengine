@@ -43,8 +43,7 @@ public class SpritePainterSystem extends EntitySystem {
 	
 	@Override
 	public void update(float delta) {
-		@SuppressWarnings("unchecked")
-		List<SpriteComponent> sprites = (List<SpriteComponent>) Game.stage.getComponents(SPRITE_ID);
+		SpriteComponent[] sprites = (SpriteComponent[]) Game.stage.getComponents(SPRITE_ID);
 		ArrayList<SpriteComponent> sortedComponents = new ArrayList<>();
 		
 		for(SpriteComponent sc : sprites)
