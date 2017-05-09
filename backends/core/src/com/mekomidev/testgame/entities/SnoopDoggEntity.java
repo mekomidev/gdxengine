@@ -5,10 +5,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.mekomidev.gdxengine.core.ecs.Entity;
-import com.mekomidev.gdxengine.core.ecs.EntityManager;
-import com.mekomidev.gdxengine.core.graphics.sprites.SpriteComponent;
-import com.mekomidev.gdxengine.core.utils.loaders.GifDecoder;
+import com.mekomidev.gdxengine.ecs.Entity;
+import com.mekomidev.gdxengine.ecs.EntityManager;
+import com.mekomidev.gdxengine.graphics.sprites.SpriteComponent;
+import com.mekomidev.gdxengine.utils.loaders.GifDecoder;
 
 public class SnoopDoggEntity extends Entity {
 	Animation<TextureRegion> gif;

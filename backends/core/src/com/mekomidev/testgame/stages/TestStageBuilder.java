@@ -2,11 +2,11 @@ package com.mekomidev.testgame.stages;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.mekomidev.gdxengine.core.Stage;
-import com.mekomidev.gdxengine.core.Stage.StageBuilder;
-import com.mekomidev.gdxengine.core.ecs.Entity;
-import com.mekomidev.gdxengine.core.graphics.sprites.SpriteComponent;
-import com.mekomidev.gdxengine.core.graphics.sprites.SpritePainterSystem;
+import com.mekomidev.gdxengine.Stage;
+import com.mekomidev.gdxengine.Stage.StageBuilder;
+import com.mekomidev.gdxengine.ecs.Entity;
+import com.mekomidev.gdxengine.graphics.sprites.SpriteComponent;
+import com.mekomidev.gdxengine.graphics.sprites.SpritePainterSystem;
 import com.mekomidev.testgame.entities.SnoopDoggEntity;
 import com.mekomidev.testgame.entities.TestSpriteEntity;
 

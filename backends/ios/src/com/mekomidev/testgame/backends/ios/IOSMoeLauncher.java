@@ -2,7 +2,7 @@ package com.mekomidev.testgame.backends.ios;
 
 import com.badlogic.gdx.backends.iosmoe.IOSApplication;
 import com.badlogic.gdx.backends.iosmoe.IOSApplicationConfiguration;
-import com.mekomidev.gdxengine.core.Game;
+import com.mekomidev.gdxengine.Game;
 
 import org.moe.natj.general.Pointer;
 
