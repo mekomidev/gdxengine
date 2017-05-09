@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.mekomidev.gdxengine.Game;
 import com.mekomidev.gdxengine.ecs.Component;
@@ -14,12 +15,12 @@ public class ModelRenderingSystem extends EntitySystem {
 	private static final int CAMERA_ID = Component.map.getSubclassId(CameraComponent.class);
 	private static final int MODEL_ID = Component.map.getSubclassId(ModelComponent.class);
 	
-	public Environment environment;
-	private ObjectMap<Camera, ModelBatch> batches;
+	public Environment environment = new Environment();
+	private ObjectMap<Camera, Array<ModelComponent>> models = new ObjectMap<>();
 
 	@Override
 	protected void init() {
-		batches = new ObjectMap<>();
+		//models = new ObjectMap<>();
 	}
 
 	@Override
@@ -30,21 +31,30 @@ public class ModelRenderingSystem extends EntitySystem {
 		
 		for(CameraComponent cc : cameras) {
 			Camera cam = cc.cam;
-			ModelBatch batch = new ModelBatch();
 			
-			batch.begin(cam);
+			Array<ModelComponent> mcs = new Array<>();
 			
 			for(ModelComponent mc : models)
-				batch.render(mc.model, environment, mc.shader);
+				mcs.add(mc);
 			
-			batches.put(cam, batch);
+			
+			this.models.put(cam, mcs);
 		}
 	}
 
 	@Override
 	protected void render() {
-		for(ModelBatch batch : batches.values())
+		for(Camera cam : models.keys()) {
+			ModelBatch batch = new ModelBatch();
+			batch.begin(cam);
+			
+			for(ModelComponent mc : models.get(cam))
+				batch.render(mc.model, environment, mc.shader);
+			
 			batch.end();
+			batch.dispose();
+		}
+			
 	}
 	
 	@Override
