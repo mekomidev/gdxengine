@@ -10,7 +10,7 @@ import com.mekomidev.gdxengine.ecs.PrimitiveEntity;
 
 public class Stage extends EntityManager implements PrimitiveEntity {
 	/** Background color */
-	public final Color backgroundColor;
+	public Color backgroundColor;
 	
 	// Camera system
 	public Camera camera;
