@@ -328,6 +328,14 @@ public class Game implements ApplicationListener {
 		}
 	}
 	
+	public static int getFramerate() {
+		return Math.round(maxDeltaTime / 1000f);
+	}
+	
+	public static float getFrameStep() {
+		return maxDeltaTime * 1000f;
+	}
+	
 	private static float delta;
 	public static float getDelta() {
 		return delta;
