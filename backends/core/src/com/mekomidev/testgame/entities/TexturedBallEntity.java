@@ -1,7 +1,7 @@
 package com.mekomidev.testgame.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,14 +10,14 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.g3d.utils.shapebuilders.EllipseShapeBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.mekomidev.gdxengine.Game;
 import com.mekomidev.gdxengine.ecs.Entity;
 import com.mekomidev.gdxengine.ecs.EntityManager;
@@ -55,32 +55,22 @@ public class TexturedBallEntity extends Entity {
 		
         
         Material mat = new Material();
-		mat.set(TextureAttribute.createDiffuse(diffuse),
+		mat.set(//ColorAttribute.createDiffuse(Color.GRAY),
+				TextureAttribute.createDiffuse(diffuse),
 				TextureAttribute.createNormal(normal),
-				TextureAttribute.createSpecular(specular));
+				TextureAttribute.createSpecular(specular)
+				);
 		
 		// Model
 		ModelBuilder builder = new ModelBuilder();
 		builder.begin();
 		builder.node().id = "demo";
-		builder.part("sphere", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal | Usage.TextureCoordinates, mat).cylinder(10f, 20f, 10f, 32);//.sphere(15f, 15f, 15f, 32, 32);//
+		/*MeshPartBuilder meshBuilder =*/ builder.part("sphere", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal | Usage.TextureCoordinates | Usage.Tangent | Usage.BiNormal, mat)/*.cylinder(10f, 20f, 10f, 32);*/.sphere(15f, 15f, 15f, 32, 32);//
+		//EllipseShapeBuilder.build(meshBuilder, 7.5f, 32, Vector3.Zero, Vector3.Z);
 		Model model = builder.end();
-		
-		FileHandle f = Gdx.files.classpath("com/mekomidev/gdxengine/graphics/g3d/shaders/");
-		//for(FileHandle fs : f.list())
-		//	System.out.println(fs.name());
-		
-		// Shader
-		/*
-		DefaultShaderProvider shaderProvider = new DefaultShaderProvider(Gdx.files.classpath("com/mekomidev/gdxengine/graphics/g3d/shaders/default.vertex.glsl"),
-																		Gdx.files.classpath("com/mekomidev/gdxengine/graphics/g3d/shaders/default.fragment.glsl"));
-																		*/
-		DefaultShaderProvider shaderProvider = new DefaultShaderProvider(Gdx.files.internal("shaders/default.vertex.glsl"),
-																		Gdx.files.internal("shaders/default.fragment.glsl"));
-		
+
 		mc = addComponent(ModelComponent.class);
 		mc.model = new ModelInstance(model);
-		mc.shader = shaderProvider.getShader(new Renderable());
 		
 		// Camera
 		cc = addComponent(CameraComponent.class);

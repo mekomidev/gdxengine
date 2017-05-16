@@ -2,9 +2,12 @@ package com.mekomidev.gdxengine.graphics.g3d;
 
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.mekomidev.gdxengine.Game;
@@ -17,10 +20,21 @@ public class ModelRenderingSystem extends EntitySystem {
 	
 	public Environment environment = new Environment();
 	private ObjectMap<Camera, Array<ModelComponent>> models = new ObjectMap<>();
+	private ShaderProvider shaderProvider;
 
 	@Override
 	protected void init() {
 		//models = new ObjectMap<>();
+		
+		// Shader
+		/*
+		DefaultShaderProvider shaderProvider = new DefaultShaderProvider(Gdx.files.classpath("com/mekomidev/gdxengine/graphics/g3d/shaders/default.vertex.glsl"),
+																		Gdx.files.classpath("com/mekomidev/gdxengine/graphics/g3d/shaders/default.fragment.glsl"));
+																		*/
+		shaderProvider = new DefaultShaderProvider(Gdx.files.internal("shaders/default.vertex.glsl"),
+													Gdx.files.internal("shaders/default.fragment.glsl"));
+		
+		//System.out.println(Gdx.files.internal("shaders/default.vertex.glsl").readString());
 	}
 
 	@Override
@@ -45,7 +59,8 @@ public class ModelRenderingSystem extends EntitySystem {
 	@Override
 	protected void render() {
 		for(Camera cam : models.keys()) {
-			ModelBatch batch = new ModelBatch();
+			//
+			ModelBatch batch = new ModelBatch(shaderProvider);
 			batch.begin(cam);
 			
 			for(ModelComponent mc : models.get(cam))
