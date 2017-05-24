@@ -16,6 +16,8 @@ ext {
 
 sourceSets {
 	main.java.srcDirs = ["src"]
+	main.resources.srcDirs = ["src"]
+	main.resources.includes = ["**/*.glsl"]
 	test.java.srcDirs = ["test"]
 }
 
