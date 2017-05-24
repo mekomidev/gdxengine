@@ -155,7 +155,8 @@ varying float v_fog;
 
 void main() {
 	#if defined(normalFlag) && defined(normalTextureFlag)
-        vec3 normal = normalize(2.0 + texture2D(u_normalTexture, v_normalUV).xyz - 1.0);
+        vec3 normal = normalize(2.0 * texture2D(u_normalTexture, v_normalUV).xyz - 1.0);
+		//vec3 normal = normalize(texture2D(u_normalTexture, v_normalUV).xyz);
         normal = normalize((v_tangent * normal.x) + (v_binormal * normal.y) + (v_normal * normal.z));
     #elif defined(normalFlag) 
         vec3 normal = v_normal;
