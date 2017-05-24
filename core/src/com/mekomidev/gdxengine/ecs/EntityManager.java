@@ -323,6 +323,8 @@ public class EntityManager implements Disposable {
 		if(prev != null)
 			prev.dispose();
 		
+		system.init();
+		
 		systemTasks.put(system.systemId, new Callable<Object>() {
 			@Override
 			public Object call() {
